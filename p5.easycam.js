@@ -935,30 +935,30 @@ var Rotation =
   
   
   slerp : function(rotA, rotB, t, dst) {
-		var a0 = rotA[0], a1 = rotA[1], a2 = rotA[2], a3 = rotA[3];
-		var b0 = rotB[0], b1 = rotB[1], b2 = rotB[2], b3 = rotB[3];
-
-		var cosTheta = a0 * b0 + a1 * b1 + a2 * b2 + a3 * b3;
-		if (cosTheta < 0) {
-			b0 = -b0;
-			b1 = -b1;
-			b2 = -b2;
-			b3 = -b3;
-			cosTheta = -cosTheta;
-		}
-
-		var theta = Math.acos(cosTheta);
-		var sinTheta = Math.sqrt(1.0 - cosTheta * cosTheta);
-
-		var w1, w2;
-		if (sinTheta > 0.001) {
-			w1 = Math.sin((1.0 - t) * theta) / sinTheta;
-			w2 = Math.sin(t * theta) / sinTheta;
-		} else {
-			w1 = 1.0 - t;
-			w2 = t;
-		}
-
+    var a0 = rotA[0], a1 = rotA[1], a2 = rotA[2], a3 = rotA[3];
+    var b0 = rotB[0], b1 = rotB[1], b2 = rotB[2], b3 = rotB[3];
+    
+    var cosTheta = a0 * b0 + a1 * b1 + a2 * b2 + a3 * b3;
+    if (cosTheta < 0) {
+      b0 = -b0;
+      b1 = -b1;
+      b2 = -b2;
+      b3 = -b3;
+      cosTheta = -cosTheta;
+    }
+    
+    var theta = Math.acos(cosTheta);
+    var sinTheta = Math.sqrt(1.0 - cosTheta * cosTheta);
+    
+    var w1, w2;
+    if (sinTheta > 0.001) {
+      w1 = Math.sin((1.0 - t) * theta) / sinTheta;
+      w2 = Math.sin(t * theta) / sinTheta;
+    } else {
+      w1 = 1.0 - t;
+      w2 = t;
+    }
+    
     dst = Rotation.assert(dst);
     dst[0] = w1 * a0 + w2 * b0; 
     dst[1] = w1 * a1 + w2 * b1; 
@@ -966,7 +966,7 @@ var Rotation =
     dst[3] = w1 * a3 + w2 * b3;
     
     return Rotation.create({rotation : dst, normalize : true}, dst);
-	},
+  },
   
   
   create : function(def, dst) {

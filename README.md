@@ -1,6 +1,6 @@
 # p5.EasyCam
 
-Simple 3D camera control for p5js.
+Simple 3D camera control for p5js and the WEBGL renderer.
 
 This library is a derivative of the original PeasyCam Library by Jonathan Feinberg 
 and combines new useful features with the great look and feel of the original version.

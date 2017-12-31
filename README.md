@@ -8,7 +8,7 @@ and combines new useful features with the great look and feel of the original ve
 https://github.com/diwi/peasycam/tree/PeasyCam3
 
 
-## Examples:
+## Examples
 
 - [CameraStates](https://diwi.github.io/p5.EasyCam/examples/CameraStates/)
 - [CameraStates_Basic](https://diwi.github.io/p5.EasyCam/examples/CameraStates_Basic/)
@@ -18,3 +18,19 @@ https://github.com/diwi/peasycam/tree/PeasyCam3
 - [SplitView](https://diwi.github.io/p5.EasyCam/examples/SplitView/)
 
 
+## Usage
+
+```javascript
+var easycam;
+
+function setup() { 
+  createCanvas(windowWidth, windowHeight, WEBGL);
+  easycam = new p5.EasyCam(this._renderer);
+} 
+
+function draw(){
+  background(64);
+  fill(255);
+  box(200);
+}
+```

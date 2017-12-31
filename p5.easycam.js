@@ -347,8 +347,6 @@ var EasyCam = class {
     
     mouse.update();
     
-    // console.log(mouse);
-    
     var b_update = false;
     b_update |= cam.dampedZoom.update();
     b_update |= cam.dampedPanX.update();
@@ -1047,12 +1045,12 @@ var Scalar = {
   },
    
   smoothstep : function(x) {
-		return x * x * (3 - 2 * x);
-	},
+  return x * x * (3 - 2 * x);
+  },
   
   smootherstep : function(t) {
-		 return x * x * x * (x * (x * 6 - 15) + 10);
-	},
+  return x * x * x * (x * (x * 6 - 15) + 10);
+  },
   
 };
 
@@ -1153,7 +1151,7 @@ var Vec3 =
   
   mix(a, b, t, dst) {
     dst = this.assert(dst);
-		dst[0] = Scalar.mix(a[0], b[0], t); 
+    dst[0] = Scalar.mix(a[0], b[0], t); 
     dst[1] = Scalar.mix(a[1], b[1], t);
     dst[2] = Scalar.mix(a[2], b[2], t);
     return dst;
@@ -1288,8 +1286,6 @@ p5.RendererGL.prototype.ortho = function(left, right, bottom, top, near, far) {
   this._curCamera = 'custom';
   
 };
-
-
 
 
 

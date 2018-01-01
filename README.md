@@ -35,4 +35,4 @@ function draw(){
   box(200);
 }
 ```
-something to play: [jsfiddle](https://jsfiddle.net/wqjugp9m/6/)
+something to play: [jsfiddle](https://jsfiddle.net/wqjugp9m/7/)

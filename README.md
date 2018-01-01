@@ -25,7 +25,8 @@ var easycam;
 
 function setup() { 
   createCanvas(windowWidth, windowHeight, WEBGL);
-  easycam = new p5.EasyCam(this._renderer);
+  easycam = new Dw.EasyCam(this._renderer);
+  // easycam = createEasyCam(); // works too
 } 
 
 function draw(){

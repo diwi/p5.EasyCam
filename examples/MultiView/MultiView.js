@@ -354,5 +354,34 @@ function handleSuperController(cameralist){
   }
   
 }
+
+
+
+
+
+
+
+
+// (function () {
+  
+  // var loadJS = function(filename){
+    // var script = document.createElement("script");
+    // script.setAttribute("type","text/javascript");
+    // script.setAttribute("src", filename);
+    // document.getElementsByTagName("head")[0].appendChild(script);
+  // }
+
+  // loadJS("https://rawgit.com/diwi/p5.EasyCam/master/p5.easycam.js");
+  
+  
+// })();
+
+
+
+
+
+
+
+
   
 

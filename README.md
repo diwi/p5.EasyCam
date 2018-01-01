@@ -26,8 +26,10 @@ var easycam;
 
 function setup() { 
   createCanvas(windowWidth, windowHeight, WEBGL);
-  easycam = new Dw.EasyCam(this._renderer);
-  // easycam = createEasyCam(); // works too
+
+  easycam = createEasyCam();
+  // easycam = new Dw.EasyCam(this._renderer);
+  // easycam = new Dw.EasyCam(this._renderer, {distance:300, center:[0,0,0]});
 } 
 
 function draw(){
@@ -39,7 +41,15 @@ function draw(){
 something to play: [jsfiddle](https://jsfiddle.net/wqjugp9m/7/)
 
 
-## screenshots
+## Reference
+
+... coming ...
+
+for now, the Java API should do it:
+- http://thomasdiewald.com/processing/libraries/PeasyCam3/reference/index.html
+
+
+## Screenshots
 
 ![MultiView](screenshots/MultiView.jpg)
 

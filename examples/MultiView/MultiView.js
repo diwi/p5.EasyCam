@@ -20,8 +20,7 @@
  
 var NX = 3;
 var NY = 2;
-var cameras = [];
-
+var cameras;
 
 function setup() { 
   createCanvas(windowWidth, windowHeight, WEBGL);
@@ -32,6 +31,7 @@ function setup() {
   
   console.log(Dw.EasyCam.INFO);
 
+  cameras = [];
   cameras.length = NX * NY;
  
   for(var i = 0; i < cameras.length; i++){

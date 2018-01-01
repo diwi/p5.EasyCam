@@ -18,17 +18,19 @@
  */
 
 
+// Dw namespace, .... new Dw.EasyCam(renderer, args);
+var Dw = {};
+
+
  
- 
-(function () {
-  
+(function(ext) {
   
   
 // p5.EasyCam library info
 const INFO = 
 {
   LIBRARY : "p5.EasyCam",
-  VERSION : "1.0.1",
+  VERSION : "1.0.2",
   AUTHOR  : "Thomas Diewald",
   SOURCE  : "https://github.com/diwi/p5.EasyCam",
   
@@ -1206,26 +1208,15 @@ var glInfo = function(){
 
 
 
-
-
-
-// adding class and objects to the p5 namespace
-// Note: Not sure if this is the preferred way ...
-
 EasyCam.INFO = INFO; // make static
 Object.freeze(INFO); // and constant
 
-// Dw namespace
-Dw = 
-{
-  EasyCam       : EasyCam,
-  DampedAction  : DampedAction,
-  Interpolation : Interpolation,
-  Rotation      : Rotation,
-  Vec3          : Vec3,
-  Scalar        : Scalar,
-}
-
+ext.EasyCam       = EasyCam;
+ext.DampedAction  = DampedAction;
+ext.Interpolation = Interpolation;
+ext.Rotation      = Rotation;
+ext.Vec3          = Vec3;
+ext.Scalar        = Scalar;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1264,7 +1255,7 @@ if(p5){
         args     = arguments[1]; // could still be undefined, which is fine
       } 
       
-      return new Dw.EasyCam(renderer, args); 
+      return new ext.EasyCam(renderer, args); 
     }
   }
   
@@ -1316,14 +1307,9 @@ if(p5){
   
 
 
+})(Dw);
 
 
-})();
-
-
-
-// Dw namespace, .... new Dw.EasyCam(renderer, args);
-var Dw;
 
 
 

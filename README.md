@@ -18,6 +18,7 @@ Java Version of this project: https://github.com/diwi/peasycam/tree/PeasyCam3
 - [SplitView](https://diwi.github.io/p5.EasyCam/examples/SplitView/)
 - [MultiView](https://diwi.github.io/p5.EasyCam/examples/MultiView/)
 
+
 ## Usage
 
 ```javascript
@@ -36,3 +37,10 @@ function draw(){
 }
 ```
 something to play: [jsfiddle](https://jsfiddle.net/wqjugp9m/7/)
+
+
+## screenshots
+
+![MultiView](screenshots/MultiView.jpg)
+
+![CameraStates](screenshots/CameraStates.jpg)

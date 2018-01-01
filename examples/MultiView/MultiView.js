@@ -22,9 +22,10 @@ var NX = 3;
 var NY = 2;
 var cameras = [];
 
+
 function setup() { 
   createCanvas(windowWidth, windowHeight, WEBGL);
-  
+
   setAttributes('antialias', true);
   
   var RENDERER = this._renderer;
@@ -262,6 +263,22 @@ function displayScene(cam){
   // cam.endHUD(this._renderer);
 
 }
+
+
+
+
+function createScreenshot(){
+  this.scrid = this.scrid || 0; 
+  saveCanvas(this._renderer, 'MultiView_'+scrid, 'jpg');
+  this.scrid++;
+}
+
+
+
+function keyReleased(){
+  if(key === 'S') createScreenshot();
+}
+
 
 
 

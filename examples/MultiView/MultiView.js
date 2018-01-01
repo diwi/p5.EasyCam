@@ -251,6 +251,15 @@ function displayScene(cam){
     }
   }
   pop();
+  
+  
+  // testing HUD
+  // cam.beginHUD(this._renderer, w, h);
+  // noStroke();
+  // fill(0, 64);
+  // rect(0,h-20, w, 20);
+  // fill(255); // transparency issue
+  // cam.endHUD(this._renderer);
 
 }
 

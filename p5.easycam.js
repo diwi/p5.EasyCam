@@ -742,7 +742,7 @@ var EasyCam = class {
    * </pre>
    * 
    */
-  beginHUD(renderer) {
+  beginHUD(renderer, w, h) {
     var cam = this.cam;
     renderer = renderer || cam.renderer;
     
@@ -750,8 +750,8 @@ var EasyCam = class {
     renderer.push();
     
     var gl = renderer.drawingContext;
-    var w = renderer.width;
-    var h = renderer.height;
+    var w = (w !== undefined) ? w : renderer.width;
+    var h = (h !== undefined) ? h : renderer.height;
     var d = Number.MAX_VALUE;
     
     gl.flush();

@@ -1,18 +1,18 @@
 /**
  * 
- * The p5.EasyCam library - Easy CameraControl for p5.js.
+ * The p5.EasyCam library - Easy 3D CameraControl for p5.js and WEBGL.
  *
- *   Copyright 2018 Thomas Diewald
+ *   Copyright 2018 by Thomas Diewald (https://www.thomasdiewald.com)
  *
- *   https://github.com/diwi/p5.EasyCam
+ *   Source: https://github.com/diwi/p5.EasyCam
  *
  *   MIT License: https://opensource.org/licenses/MIT
  * 
  * 
  * explanatory notes:
  * 
- * This library is a derivative of the original PeasyCam Library by Jonathan Feinberg 
- * and combines new useful features with the great look and feel of the original version.
+ * p5.EasyCam is a derivative of the original PeasyCam Library by Jonathan Feinberg 
+ * and combines new useful features with the great look and feel of its parent.
  * 
  * 
  */

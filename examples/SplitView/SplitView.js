@@ -133,27 +133,8 @@ function windowResized() {
 
 
 function draw(){
-  
-  // delay 0 will make them sync completely
-  // but the latency is kind of pleasing to watch
-  var delay = 125; 
-  var cm1 = easycam1.mouse;
-  var cm2 = easycam2.mouse;
-  
-  // press SPACE to sync camera states
-  if(keyIsPressed && key == ' '){
-    var state1 = easycam1.getState();
-    var state2 = easycam2.getState();
-
-    if(cm1.isPressed){
-      easycam2.setState(state1, delay);
-    } else if(cm2.isPressed){
-      easycam1.setState(state2, delay);
-    } else {
-      if(cm1.insideViewport(mouseX, mouseY)) easycam2.setState(state1, delay);
-      if(cm2.insideViewport(mouseX, mouseY)) easycam1.setState(state2, delay);
-    }
-  }
+ 
+  handleSuperController([easycam1, easycam2]);
   
   // render a scene for each camera
   displayScene(easycam1);
@@ -203,6 +184,7 @@ function displayScene(cam){
   
   pg.push();
   pg.noStroke();
+  
   // projection
   pg.perspective(60 * PI/180, w/h, 1, 5000);
 
@@ -260,6 +242,48 @@ function displayScene(cam){
 
 
 function mousePressed(){
+}
+
+
+
+
+
+
+function handleSuperController(cameralist){
+
+  if(keyIsPressed && key === ' '){
+    
+    var delay = 150; 
+    var active  = undefined;
+    var focused = undefined;
+    
+    // find active or focused camera which controls the others
+    for(var i in cameralist){
+      var cam = cameralist[i];
+      if(cam.mouse.isPressed){
+        active = cam;
+        break;
+      }
+      if(cam.mouse.insideViewport(mouseX, mouseY)){
+        focused = cam;
+      }
+    }
+    
+    // no active camera, try focused
+    active = active || focused;
+    
+    // apply state to all other cameras
+    if(active) {
+      var state = active.getState();
+      for(var i in cameralist){
+        var cam = cameralist[i];
+        if(cam != active){
+          cam.setState(state, delay);
+        }
+      }
+    }
+  }
+  
 }
 
 

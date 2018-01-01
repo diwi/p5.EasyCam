@@ -27,7 +27,7 @@ function setup() {
   console.log(Dw.EasyCam.INFO);
 
   // easycam = new Dw.EasyCam(this._renderer, {distance : 600});
-  easycam = createEasyCam({distance : 600});
+  easycam = createEasyCam();
   
   // some debug stuff, p5 is quite confusing at this point
   // console.log("--------------------------------")

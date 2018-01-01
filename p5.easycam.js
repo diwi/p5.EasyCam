@@ -64,23 +64,25 @@ var EasyCam = class {
    */
   constructor(renderer, args) {
     
-    // library info
-    this.INFO = INFO;
-    
+
     // webgl renderer required
     if(!(renderer instanceof p5.RendererGL)){
-      console.log("P5Cam needs a valid reference p5.RendererGL");
+      console.log("renderer needs to be an instance of p5.RendererGL");
       return;
     }
     
-
     // define default args
     args = args || {};
     if(args.distance === undefined) args.distance  = 500;
     if(args.center   === undefined) args.center    = [0, 0, 0];
     if(args.rotation === undefined) args.rotation  = Rotation.identity();
     if(args.viewport === undefined) args.viewport  = [0, 0, renderer.width, renderer.height];
+   
 
+    
+    // library info
+    this.INFO = INFO;
+    
     
     // set renderer, graphics, p5
     // this.renderer;
@@ -232,6 +234,7 @@ var EasyCam = class {
           
           this.updateDragConstraint();
           
+ 
           if(cam.P5.mouseButton === cam.P5.LEFT   && this.mouseDragLeft  ) this.mouseDragLeft();
           if(cam.P5.mouseButton === cam.P5.CENTER && this.mouseDragCenter) this.mouseDragCenter();
           if(cam.P5.mouseButton === cam.P5.RIGHT  && this.mouseDragRight ) this.mouseDragRight();
@@ -277,10 +280,12 @@ var EasyCam = class {
 
     // p5 mouse listeners
     // TODO, doesnt work for offscreen graphics
-    this.renderer.mousePressed (function(event){ cam.mouse.pressed (event); });
-    this.renderer.mouseReleased(function(event){ cam.mouse.released(event); });
-    this.renderer.mouseClicked (function(event){ cam.mouse.clicked (event); });
-    this.renderer.mouseWheel   (function(event){ cam.mouse.wheel   (event); });
+    if(this.renderer){
+      this.renderer.mousePressed (function(event){ passive: true; cam.mouse.pressed (event); event.preventDefault(); });
+      this.renderer.mouseReleased(function(event){ passive: true; cam.mouse.released(event); });
+      this.renderer.mouseClicked (function(event){ passive: true; cam.mouse.clicked (event); });
+      this.renderer.mouseWheel   (function(event){ passive: true; cam.mouse.wheel   (event); });
+    }
     
     // p5 registered callbacks
     this.auto_update = true;
@@ -331,6 +336,7 @@ var EasyCam = class {
       }
       this.P5 = this.graphics._pInst;
     } else {
+      this.graphics = undefined;
       this.renderer = undefined;
     }
   }
@@ -383,6 +389,7 @@ var EasyCam = class {
     if(!renderer){
       return;
     }
+ 
     
     this.camEYE = this.getPosition(this.camEYE);   
     this.camLAT = this.getCenter  (this.camLAT);

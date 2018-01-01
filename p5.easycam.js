@@ -1,18 +1,18 @@
 /**
  * 
- * The p5.EasyCam library - Easy CameraControl for p5.js.
+ * The p5.EasyCam library - Easy 3D CameraControl for p5.js and WEBGL.
  *
- *   Copyright 2018 Thomas Diewald
+ *   Copyright 2018 by Thomas Diewald (https://www.thomasdiewald.com)
  *
- *   https://github.com/diwi/p5.EasyCam
+ *   Source: https://github.com/diwi/p5.EasyCam
  *
  *   MIT License: https://opensource.org/licenses/MIT
  * 
  * 
  * explanatory notes:
  * 
- * This library is a derivative of the original PeasyCam Library by Jonathan Feinberg 
- * and combines new useful features with the great look and feel of the original version.
+ * p5.EasyCam is a derivative of the original PeasyCam Library by Jonathan Feinberg 
+ * and combines new useful features with the great look and feel of its parent.
  * 
  * 
  */
@@ -27,9 +27,15 @@
 // p5.EasyCam library info
 const INFO = 
 {
-  VERSION : "1.0.0",
+  LIBRARY : "p5.EasyCam",
+  VERSION : "1.0.1",
   AUTHOR  : "Thomas Diewald",
   SOURCE  : "https://github.com/diwi/p5.EasyCam",
+  
+  toString : function(){
+    return this.LIBRARY+" v"+this.VERSION+" by "+this.AUTHOR+" ("+this.SOURCE+")";
+  },
+  
 };
 
 
@@ -97,8 +103,8 @@ var EasyCam = class {
     
     
     // some constants
-    this.LOOK     = [0, 0, 1];
-    this.UP       = [0, 1, 0];
+    this.LOOK = [0, 0, 1];
+    this.UP   = [0, 1, 0];
 
     // principal axes flags
     this.AXIS = new function() {
@@ -1045,11 +1051,11 @@ var Scalar = {
   },
    
   smoothstep : function(x) {
-  return x * x * (3 - 2 * x);
+    return x * x * (3 - 2 * x);
   },
   
   smootherstep : function(t) {
-  return x * x * x * (x * (x * 6 - 15) + 10);
+    return x * x * x * (x * (x * 6 - 15) + 10);
   },
   
 };
@@ -1190,103 +1196,117 @@ var glInfo = function(){
 
 
 
+
+
+
+
+
+
 // adding class and objects to the p5 namespace
 // Note: Not sure if this is the preferred way ...
+
+EasyCam.INFO = INFO; // make static
+Object.freeze(INFO); // and constant
+
+// Dw namespace
+Dw = 
 {
-  EasyCam.INFO = INFO; // make static
-  Object.freeze(INFO); // and constant
-
-  if(p5)
-  {
-    p5.EasyCam = EasyCam;
-
-    p5.DampedAction = DampedAction;
-    p5.Interpolation = Interpolation;
-
-    p5.Rotation = Rotation;
-    p5.Vec3 = Vec3;
-    p5.Scalar = Scalar;
-    
-    if(!p5.prototype.hasOwnProperty('glInfo')){
-      p5.prototype.glInfo = function(){
-        return this._renderer.glInfo.apply(this._renderer, arguments);
-      };
-      
-      p5.RendererGL.prototype.glInfo = glInfo;
-    }
-    
-    
-  }
-  
-  
+  EasyCam       : EasyCam,
+  DampedAction  : DampedAction,
+  Interpolation : Interpolation,
+  Rotation      : Rotation,
+  Vec3          : Vec3,
+  Scalar        : Scalar,
 }
 
 
-p5_EasyCam = EasyCam;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// patches, bug fixes, workarounds, ...
+// p5 patches, bug fixes, workarounds, ...
 //
 ////////////////////////////////////////////////////////////////////////////////
-
-
-
-// https://github.com/processing/p5.js/pull/2463
-
-p5.prototype.ortho = function(){
-  this._renderer.ortho.apply(this._renderer, arguments);
-  return this;
-};
-
-p5.RendererGL.prototype.ortho = function(left, right, bottom, top, near, far) {
-
-  if(left   === undefined) left   = -this.width  / 2;
-  if(right  === undefined) right  = +this.width  / 2;
-  if(bottom === undefined) bottom = -this.height / 2;
-  if(top    === undefined) top    = +this.height / 2;
-  if(near   === undefined) near   =  0;
-  if(far    === undefined) far    =  Math.max(this.width, this.height);
-
-  var w = right - left;
-  var h = top - bottom;
-  var d = far - near;
-
-  var x = +2.0 / w;
-  var y = +2.0 / h;
-  var z = -2.0 / d;
-
-  var tx = -(right + left) / w;
-  var ty = -(top + bottom) / h;
-  var tz = -(far + near) / d;
-
-  this.uPMatrix = p5.Matrix.identity();
-  this.uPMatrix.set(  x,  0,  0,  0,
-                      0, -y,  0,  0,
-                      0,  0,  z,  0,
-                     tx, ty, tz,  1);
-
-  this._curCamera = 'custom';
+if(p5){
   
-};
+  
+  //
+  // p5.glInfo();
+  //
+  if(!p5.prototype.hasOwnProperty('glInfo'))
+  {
+    p5.prototype.glInfo = function(){
+      return this._renderer.glInfo.apply(this._renderer, arguments);
+    };
+    
+    p5.RendererGL.prototype.glInfo = glInfo;
+  }
+  
+  
+  //
+  // p5.createEasyCam();
+  //
+  if(!p5.prototype.hasOwnProperty('createEasyCam'))
+  {
+    p5.prototype.createEasyCam = function(/* p5.RendererGL, {state} */){
+      
+      var renderer = this._renderer;
+      var args     = arguments[0];
+      
+      if(arguments[0] instanceof p5.RendererGL){
+        renderer = arguments[0];
+        args     = arguments[1]; // could still be undefined, which is fine
+      } 
+      
+      return new Dw.EasyCam(renderer, args); 
+    }
+  }
+  
+  
+  //
+  // p5.ortho();
+  //
+  // https://github.com/processing/p5.js/pull/2463
+  p5.prototype.ortho = function(){
+    this._renderer.ortho.apply(this._renderer, arguments);
+    return this;
+  };
 
+  p5.RendererGL.prototype.ortho = function(left, right, bottom, top, near, far) {
+
+    if(left   === undefined) left   = -this.width  / 2;
+    if(right  === undefined) right  = +this.width  / 2;
+    if(bottom === undefined) bottom = -this.height / 2;
+    if(top    === undefined) top    = +this.height / 2;
+    if(near   === undefined) near   =  0;
+    if(far    === undefined) far    =  Math.max(this.width, this.height);
+
+    var w = right - left;
+    var h = top - bottom;
+    var d = far - near;
+
+    var x = +2.0 / w;
+    var y = +2.0 / h;
+    var z = -2.0 / d;
+
+    var tx = -(right + left) / w;
+    var ty = -(top + bottom) / h;
+    var tz = -(far + near) / d;
+
+    this.uPMatrix = p5.Matrix.identity();
+    this.uPMatrix.set(  x,  0,  0,  0,
+                        0, -y,  0,  0,
+                        0,  0,  z,  0,
+                       tx, ty, tz,  1);
+
+    this._curCamera = 'custom';
+    
+  };
+    
+  
+
+  
+}
+  
 
 
 
@@ -1295,14 +1315,8 @@ p5.RendererGL.prototype.ortho = function(left, right, bottom, top, near, far) {
 
 
 
-
-
-
-// just in case, instead of p5.EasyCam
-// ... not sure if I should keep this
-var p5_EasyCam; 
-
-
+// Dw namespace, .... new Dw.EasyCam(renderer, args);
+var Dw;
 
 
 

@@ -35,14 +35,17 @@ function setup() {
   // define initial state
   var state = {
     distance : 200,
-    // rotation : p5.Rotation.create({angles_xyz:[0, 0, 0]}),
+    // rotation : Dw.Rotation.create({angles_xyz:[0, 0, 0]}),
   };
   
-  easycam = new p5.EasyCam(this._renderer, state);
+  easycam = new Dw.EasyCam(this._renderer, state);
   
+  // slower transitions look nicer in the ortho mode
+  easycam.setDefaultInterpolationTime(2000); //slower transition
   // start with an animated rotation
-  easycam.setRotation(p5.Rotation.create({angles_xyz:[PI/2, PI/2, PI/2]}), 2000);
-  easycam.setDistance(400, 2000);
+  easycam.setRotation(Dw.Rotation.create({angles_xyz:[PI/2, PI/2, PI/2]}), 2500);
+  easycam.setDistance(400, 2500);
+
 } 
 
 

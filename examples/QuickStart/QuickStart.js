@@ -1,51 +1,51 @@
 /**
  * 
- * The p5.EasyCam library - Easy CameraControl for p5.js.
+ * The p5.EasyCam library - Easy 3D CameraControl for p5.js and WEBGL.
  *
- *   Copyright 2018 Thomas Diewald
+ *   Copyright 2018 by Thomas Diewald (https://www.thomasdiewald.com)
  *
- *   https://github.com/diwi/p5.EasyCam
+ *   Source: https://github.com/diwi/p5.EasyCam
  *
  *   MIT License: https://opensource.org/licenses/MIT
  * 
  * 
  * explanatory notes:
  * 
- * This library is a derivative of the original PeasyCam Library by Jonathan Feinberg 
- * and combines new useful features with the great look and feel of the original version.
+ * p5.EasyCam is a derivative of the original PeasyCam Library by Jonathan Feinberg 
+ * and combines new useful features with the great look and feel of its parent.
  * 
  * 
  */
  
  
 
-var easycam;
+// var easycam;
 
 function setup() { 
   var canvas = createCanvas(windowWidth, windowHeight, WEBGL);
   setAttributes('antialias', true);
-  
-  console.log(p5.EasyCam.INFO);
-  
-  easycam = new p5.EasyCam(this._renderer, {distance : 600});
+  console.log(Dw.EasyCam.INFO);
+
+  // easycam = new Dw.EasyCam(this._renderer, {distance : 600});
+  easycam = createEasyCam({distance : 600});
   
   // some debug stuff, p5 is quite confusing at this point
-  console.log("--------------------------------")
-  console.log("this");
-  console.log(this);
-  console.log("--------------------------------")
-  console.log("canvas");
-  console.log(canvas);
-  console.log("--------------------------------")
-  console.log("easycam.renderer");
-  console.log(easycam.renderer);
-  console.log("--------------------------------")
-  console.log("easycam.graphics");
-  console.log(easycam.graphics);
-  console.log("--------------------------------")
-  console.log("easycam.P5");
-  console.log(easycam.P5);
-  console.log("--------------------------------")
+  // console.log("--------------------------------")
+  // console.log("this");
+  // console.log(this);
+  // console.log("--------------------------------")
+  // console.log("canvas");
+  // console.log(canvas);
+  // console.log("--------------------------------")
+  // console.log("easycam.renderer");
+  // console.log(easycam.renderer);
+  // console.log("--------------------------------")
+  // console.log("easycam.graphics");
+  // console.log(easycam.graphics);
+  // console.log("--------------------------------")
+  // console.log("easycam.P5");
+  // console.log(easycam.P5);
+  // console.log("--------------------------------")
   
 } 
 

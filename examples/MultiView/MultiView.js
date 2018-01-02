@@ -18,6 +18,26 @@
  */
  
  
+//
+//
+// MultiView (advanced version)
+//
+// N x N Camera Views of the same scene, on only one graphics-buffer.
+//
+// In this demo only one render-target is used -> the primary p5.RendererGL.
+// Each Camera still has its own mouse-handler. 
+// Only the viewport-position/dimension is used to build the camera state.
+//
+// For rendering, some OpenGL instructions (viewport, scissors) are used to
+// render the scene to its actual camera viewport position/size.
+// 
+// Window is resizeAble
+// 
+// pressed SPACE + Mouse-drag, to apply state of active camera to all others
+//
+//
+ 
+ 
 var NX = 3;
 var NY = 2;
 var cameras;

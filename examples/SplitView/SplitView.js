@@ -16,8 +16,19 @@
  * 
  * 
  */
- 
- 
+
+//
+// SplitView setup
+//
+// Two cameras, each one owns its own rendertarget.
+//
+// Note: p5 (v0.5.16) is a bit bugy here.
+//       AntiAliasing is disabled + this demo comes with a little patch to be
+//       be able to execute.
+//
+// https://github.com/processing/p5.js/issues/2479
+// https://github.com/processing/p5.js/issues/2478
+//
  
 var easycam1;
 var easycam2;

@@ -18,13 +18,11 @@
  */
  
 //
-// Simple SplitView setup
+// p5.EasyCam - ModelView Matrix
+// projection - ortho
 //
-// Two independent Cameras are created, each owns its own webgl-renderer.
-//
-// The two cameras can be synced by pressing the SPACE-bar.
-// 
- 
+
+
 var easycam;
 
 function setup() { 
@@ -76,7 +74,7 @@ function draw(){
   noStroke();
   randomSeed(2);
   for(var i = 0; i < 50; i++){
-    push();
+
     var m = 100;
     var tx = random(-m, m);
     var ty = random(-m, m);
@@ -86,6 +84,7 @@ function draw(){
     var g = ((ty / m) * 0.5 + 0.5) * r/2;
     var b = ((tz / m) * 0.5 + 0.5) * g;
  
+    push();
     translate(tx, ty, tz);
     ambientMaterial(r,g,b);
     box(random(10,40));

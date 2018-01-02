@@ -30,7 +30,7 @@ var Dw = {};
 const INFO = 
 {
   LIBRARY : "p5.EasyCam",
-  VERSION : "1.0.2",
+  VERSION : "1.0.3",
   AUTHOR  : "Thomas Diewald",
   SOURCE  : "https://github.com/diwi/p5.EasyCam",
   
@@ -206,89 +206,74 @@ var EasyCam = class {
         if(cam.SHIFT_CONSTRAINT) cam.DRAG_CONSTRAINT = cam.SHIFT_CONSTRAINT;
       },
       
-      pressed : function(event){
+      mousedown : function(event){
         // console.log("pressed");
+        var mouse = cam.mouse;
         var x = event.x;
         var y = event.y;
-        if(this.insideViewport(x, y)){
-          this.curr[0] = this.prev[0] = x;
-          this.curr[1] = this.prev[1] = y;
+        if(mouse.insideViewport(x, y)){
+          mouse.curr[0] = mouse.prev[0] = x;
+          mouse.curr[1] = mouse.prev[1] = y;
           
-          this.dist[0] = 0;
-          this.dist[1] = 0;
+          mouse.dist[0] = 0;
+          mouse.dist[1] = 0;
           
-          this.isPressed = true;
+          mouse.isPressed = true;
           cam.SHIFT_CONSTRAINT = 0;
         }
       },
       
       update : function(){
         // console.log("update");
-        if(this.isPressed){
-          this.prev[0] = this.curr[0];
-          this.prev[1] = this.curr[1];
+        var mouse = cam.mouse;
+        if(mouse.isPressed){
+          mouse.prev[0] = mouse.curr[0];
+          mouse.prev[1] = mouse.curr[1];
           
-          this.curr[0] = cam.P5.mouseX;
-          this.curr[1] = cam.P5.mouseY;
+          mouse.curr[0] = cam.P5.mouseX;
+          mouse.curr[1] = cam.P5.mouseY;
           
-          this.dist[0] = -(this.curr[0] - this.prev[0]);
-          this.dist[1] = -(this.curr[1] - this.prev[1]);
+          mouse.dist[0] = -(mouse.curr[0] - mouse.prev[0]);
+          mouse.dist[1] = -(mouse.curr[1] - mouse.prev[1]);
           
-          this.updateDragConstraint();
+          mouse.updateDragConstraint();
           
- 
-          if(cam.P5.mouseButton === cam.P5.LEFT   && this.mouseDragLeft  ) this.mouseDragLeft();
-          if(cam.P5.mouseButton === cam.P5.CENTER && this.mouseDragCenter) this.mouseDragCenter();
-          if(cam.P5.mouseButton === cam.P5.RIGHT  && this.mouseDragRight ) this.mouseDragRight();
+          if(cam.P5.mouseButton === cam.P5.LEFT   && mouse.mouseDragLeft  ) mouse.mouseDragLeft();
+          if(cam.P5.mouseButton === cam.P5.CENTER && mouse.mouseDragCenter) mouse.mouseDragCenter();
+          if(cam.P5.mouseButton === cam.P5.RIGHT  && mouse.mouseDragRight ) mouse.mouseDragRight();
         }
       },
       
-      released : function(event){
+      mouseup : function(event){
         // console.log("released");
-        this.isPressed = false;
+        cam.mouse.isPressed = false;
         cam.SHIFT_CONSTRAINT = 0;
       },
       
-      clicked : function(event){
+ 
+      dblclick : function(event){
         var x = event.x;
         var y = event.y;
-        if(this.insideViewport(x, y)){
-          this.time = this.time || 0;
-          var elapsed = event.timeStamp - this.time;
-          this.time = event.timeStamp;
-               
-          if(elapsed < this.doubleClickTime){
-            this.doubleClicked(event);
-          }
+        if(cam.mouse.insideViewport(x, y)){
+          cam.reset();
         }
-      },
-      
-      doubleClickTime : 200,
-      
-      doubleClicked : function(){
-        cam.reset();
       },
       
       wheel : function(event){
         var x = event.x;
         var y = event.y;
-        if(this.insideViewport(x, y)){
-          this.mwheel = event.deltaY * 0.01;
-          if(this.mouseWheelAction) this.mouseWheelAction();
+        var mouse = cam.mouse;
+        if(mouse.insideViewport(x, y)){
+          mouse.mwheel = event.deltaY * 0.01;
+          if(mouse.mouseWheelAction) mouse.mouseWheelAction();
         }
       },
     };
-    
+    this.counter = 0;
 
-    // p5 mouse listeners
-    // TODO, doesnt work for offscreen graphics
-    if(this.renderer){
-      this.renderer.mousePressed (function(event){ passive: true; cam.mouse.pressed (event); event.preventDefault(); });
-      this.renderer.mouseReleased(function(event){ passive: true; cam.mouse.released(event); });
-      this.renderer.mouseClicked (function(event){ passive: true; cam.mouse.clicked (event); });
-      this.renderer.mouseWheel   (function(event){ passive: true; cam.mouse.wheel   (event); });
-    }
-    
+    // camera mouse listeners
+    this.attachMouseListeners();
+   
     // p5 registered callbacks
     this.auto_update = true;
     p5.prototype.registerMethod('pre', function(){ 
@@ -309,21 +294,10 @@ var EasyCam = class {
     this.timedRot  = new Interpolation(this, this.setInterpolatedRotation);
     this.timedPan  = new Interpolation(this, this.setInterpolatedCenter  );
     this.timedzoom = new Interpolation(this, this.setInterpolatedDistance);
-    
   }
   
   
-  getAutoUpdate(){
-    return this.auto_update;
-  }
-  
-  setAutoUpdate(status){
-    this.auto_update = status;
-  }
-  
-  getCanvas(){
-    return this.renderer;
-  }
+
   
   setCanvas(renderer){
     if(renderer instanceof p5.RendererGL){
@@ -342,6 +316,74 @@ var EasyCam = class {
       this.renderer = undefined;
     }
   }
+  
+  
+  getCanvas(){
+    return this.renderer;
+  }
+  
+  
+  
+  attachListener(element, ev, fx, opt){
+    if(element && !fx.attached){
+      element.addEventListener(ev, fx, opt);
+      fx.attached = true;
+    } 
+  }
+  
+  detachListener(element, ev, fx, opt){
+    if(element && fx.attached){
+      element.removeEventListener(ev, fx, opt);
+      fx.attached = false;
+    } 
+  }
+  
+  attachMouseListeners(renderer){
+    var cam = this.cam;
+    var mouse = cam.mouse;
+    renderer = renderer || cam.renderer;
+    if(renderer){
+      
+      var opt = { passive:true };
+      cam.mouseEventTarget = renderer.elt;
+      
+      cam.attachListener(cam.mouseEventTarget, 'mousedown', mouse.mousedown, opt);
+      cam.attachListener(cam.mouseEventTarget, 'mouseup'  , mouse.mouseup  , opt);
+      cam.attachListener(cam.mouseEventTarget, 'dblclick' , mouse.dblclick , opt);
+      cam.attachListener(cam.mouseEventTarget, 'wheel'    , mouse.wheel    , opt);
+    }
+  }
+  
+  removeMouseListeners(){
+    var cam = this.cam;
+    if(cam.mouseEventTarget){
+      var opt = { passive:true };
+   
+      cam.detachListener(cam.mouseEventTarget, 'mousedown', mouse.mousedown, opt);
+      cam.detachListener(cam.mouseEventTarget, 'mouseup'  , mouse.mouseup  , opt);
+      cam.detachListener(cam.mouseEventTarget, 'dblclick' , mouse.dblclick , opt);
+      cam.detachListener(cam.mouseEventTarget, 'wheel'    , mouse.wheel    , opt);
+      
+      cam.mouseEventTarget = undefined;
+    }
+  }
+  
+  
+  dispose(){
+    // TODO: p5 unregister 'pre', ... not available in 0.5.16
+    removeMouseListeners();
+  }
+  
+  
+  getAutoUpdate(){
+    return this.auto_update;
+  }
+  
+  setAutoUpdate(status){
+    this.auto_update = status;
+  }
+  
+
   
   
   // [x,y,w,h]

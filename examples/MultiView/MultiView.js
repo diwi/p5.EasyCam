@@ -72,29 +72,9 @@ function setup() {
   // set camera viewports
   setCameraViewports();
 
-  // set camera callbacks
-  RENDERER.mousePressed (function(event){
-    for (var i in cameras){
-      cameras[i].mouse.pressed(event);
-    }
-  });
-  RENDERER.mouseReleased (function(event){ 
-    for (var i in cameras){
-      cameras[i].mouse.released(event);
-    }
-  });
-  RENDERER.mouseClicked (function(event){  
-    for (var i in cameras){
-      cameras[i].mouse.clicked(event);
-    }
-  });
-  RENDERER.mouseWheel (function(event){  
-    for (var i in cameras){
-      cameras[i].mouse.wheel(event);
-    }
-  });
-  
 }
+
+
 
 
 function setCameraViewports(){

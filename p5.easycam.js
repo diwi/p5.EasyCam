@@ -341,6 +341,7 @@ var EasyCam = class {
   attachMouseListeners(renderer){
     var cam = this.cam;
     var mouse = cam.mouse;
+    
     renderer = renderer || cam.renderer;
     if(renderer){
       
@@ -356,6 +357,8 @@ var EasyCam = class {
   
   removeMouseListeners(){
     var cam = this.cam;
+    var mouse = cam.mouse;
+       
     if(cam.mouseEventTarget){
       var opt = { passive:true };
    

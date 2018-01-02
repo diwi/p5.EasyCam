@@ -62,6 +62,12 @@ function setup() {
   easycam2.setDistanceMin(10);
   easycam2.setDistanceMax(3000);
   
+  easycam1.removeMouseListeners();
+  easycam2.removeMouseListeners();
+  easycam1.attachMouseListeners(this._renderer);
+  easycam2.attachMouseListeners(this._renderer);
+  
+  
   // add some custom attributes
   easycam1.IDX = 0;
   easycam2.IDX = 1;
@@ -98,22 +104,22 @@ function setup() {
   // only one event listener per element can be set, so we have to set things 
   // up manually.
   // This will probably be handly differently in furture p5 releases.
-  canvas.mousePressed (function(event){ 
-    easycam1.mouse.pressed(event);
-    easycam2.mouse.pressed(event);
-  });
-  canvas.mouseReleased (function(event){ 
-    easycam1.mouse.released(event);
-    easycam2.mouse.released(event);
-  });
-  canvas.mouseClicked (function(event){ 
-    easycam1.mouse.clicked(event);
-    easycam2.mouse.clicked(event);
-  });
-  canvas.mouseWheel (function(event){ 
-    easycam1.mouse.wheel(event);
-    easycam2.mouse.wheel(event);
-  });
+  // canvas.mousePressed (function(event){ 
+    // easycam1.mouse.pressed(event);
+    // easycam2.mouse.pressed(event);
+  // });
+  // canvas.mouseReleased (function(event){ 
+    // easycam1.mouse.released(event);
+    // easycam2.mouse.released(event);
+  // });
+  // canvas.mouseClicked (function(event){ 
+    // easycam1.mouse.clicked(event);
+    // easycam2.mouse.clicked(event);
+  // });
+  // canvas.mouseWheel (function(event){ 
+    // easycam1.mouse.wheel(event);
+    // easycam2.mouse.wheel(event);
+  // });
   
 } 
 

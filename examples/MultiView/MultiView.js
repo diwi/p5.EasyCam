@@ -98,21 +98,32 @@ function setup() {
 
 
 function setCameraViewports(){
-  var border = 2;
-  var dimx = (width  / NX);
-  var dimy = (height / NY);
+  var gap = 3;
   
+  // tiling size
+  var tilex = floor((width  - gap) / NX);
+  var tiley = floor((height - gap) / NY);
+ 
+  // viewport offset ... corrected gap due to floor()
+  var offx = (width  - (tilex * NX - gap)) / 2;
+  var offy = (height - (tiley * NY - gap)) / 2;
+  
+  // viewport dimension
+  var cw = tilex - gap;
+  var ch = tiley - gap;
+  
+  // create new viewport for each camera
   for(var y = 0; y < NY; y++){
     for(var x = 0; x < NX; x++){
       var id = y * NX + x;
-      var cw = dimx - border * 2;
-      var ch = dimy - border * 2;
-      var cx = x * dimx + border;
-      var cy = y * dimy + border;
+      var cx = offx + x * tilex;
+      var cy = offy + y * tiley;
       cameras[id].setViewport([cx, cy, cw, ch]); // this is the key of this whole demo
     }
   }
+  
 }
+
 
 
 function windowResized() {
@@ -180,23 +191,9 @@ function displayScene(cam){
   background(255);
   
   // render scene as usual
+  
 	strokeWeight(1);
 
-	// fill(255, 64, 0);
-	// box(200);
-  
-	// push();
-	// translate(0, +200, 0);
-	// fill(0, 64, 255);
-	// box(100);
-	// pop();
-  
-  // push();
-	// translate(0, -200, 0);
-	// fill(64, 255, 0);
-	// box(50);
-	// pop();
-  
   var boxes_x = 3;
   var boxes_y = 3;
   

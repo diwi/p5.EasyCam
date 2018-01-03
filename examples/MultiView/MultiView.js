@@ -55,12 +55,14 @@ function setup() {
   cameras.length = NX * NY;
  
   for(var i = 0; i < cameras.length; i++){
+    // create EasyCam
     cameras[i] = new Dw.EasyCam(RENDERER);
+    // set ID
     cameras[i].ID = i;
-    cameras[i].setCanvas(null);      // no canvas needed
-    cameras[i].setAutoUpdate(false); // update is handled manually
-    // cameras[i].P5 = this;
-  
+    // remove canvas, we handle this manually
+    cameras[i].setCanvas(null);
+    // no autoupdate, also handled manually
+    cameras[i].setAutoUpdate(false); 
     // set some random states at the beginning
     var rx = random(-PI,PI)/8;
     var ry = random(-PI,PI)/4;
@@ -71,7 +73,6 @@ function setup() {
   
   // set camera viewports
   setCameraViewports();
-
 }
 
 
@@ -101,7 +102,7 @@ function setCameraViewports(){
       cameras[id].setViewport([cx, cy, cw, ch]); // this is the key of this whole demo
     }
   }
-  
+ 
 }
 
 
@@ -231,9 +232,9 @@ function displayScene(cam){
       var gs = (cr + cg + cb) / 3;
       
       switch(cam.ID){
-        case 0:  ambientMaterial(cr, cg, cb);break;
-        case 1:  ambientMaterial(gs, gs, gs);break;
-        case 2:  fill(255)                  ;break;
+        case 0:  ambientMaterial(cr, cg, cb); break;
+        case 1:  ambientMaterial(gs, gs, gs); break;
+        case 2:  fill(255)                  ; break;
         default: fill(cr, cg, cb)           ; break;
       }
       

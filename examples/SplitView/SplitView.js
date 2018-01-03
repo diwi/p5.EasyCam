@@ -39,7 +39,6 @@ function setup() {
   // var canvas = createCanvas(windowWidth, windowHeight, WEBGL);
   // setAttributes('antialias', true);
 
-
   var canvas = createCanvas(windowWidth, windowHeight);
 
   // console.log(this);
@@ -52,7 +51,6 @@ function setup() {
   var graphics1 = createGraphics(w, h, WEBGL)
   var graphics2 = createGraphics(w, h, WEBGL);
 
-
   easycam1 = new Dw.EasyCam(graphics1._renderer, {distance : 800});
   easycam2 = new Dw.EasyCam(graphics2._renderer, {distance : 800});
   
@@ -62,8 +60,6 @@ function setup() {
   easycam2.setDistanceMin(10);
   easycam2.setDistanceMax(3000);
   
-  easycam1.removeMouseListeners();
-  easycam2.removeMouseListeners();
   easycam1.attachMouseListeners(this._renderer);
   easycam2.attachMouseListeners(this._renderer);
   
@@ -77,50 +73,26 @@ function setup() {
   easycam2.setViewport([w,0,w,h]);
   
   // some debug stuff, p5 is quite confusing at this point
-  console.log("--------------------------------")
-  console.log("this");
-  console.log(this);
-  console.log("--------------------------------")
-  console.log("canvas");
-  console.log(canvas);
-  console.log("--------------------------------")
-  console.log("graphics");
-  console.log(graphics1);
-  console.log(graphics2);
-  console.log("--------------------------------")
-  console.log("easycam.renderer");
-  console.log(easycam1.renderer);
-  console.log(easycam2.renderer);
-  console.log("--------------------------------")
-  console.log("easycam.graphics");
-  console.log(easycam1.graphics);
-  console.log(easycam2.graphics);
-  console.log("--------------------------------")
-  console.log("easycam.P5");
-  console.log(easycam1.P5);
-  console.log(easycam2.P5);
-  console.log("--------------------------------")
-  
-  // only one event listener per element can be set, so we have to set things 
-  // up manually.
-  // This will probably be handly differently in furture p5 releases.
-  // canvas.mousePressed (function(event){ 
-    // easycam1.mouse.pressed(event);
-    // easycam2.mouse.pressed(event);
-  // });
-  // canvas.mouseReleased (function(event){ 
-    // easycam1.mouse.released(event);
-    // easycam2.mouse.released(event);
-  // });
-  // canvas.mouseClicked (function(event){ 
-    // easycam1.mouse.clicked(event);
-    // easycam2.mouse.clicked(event);
-  // });
-  // canvas.mouseWheel (function(event){ 
-    // easycam1.mouse.wheel(event);
-    // easycam2.mouse.wheel(event);
-  // });
-  
+  // console.log("--------------------------------")
+  // console.log("this");
+  // console.log(this);
+  // console.log("--------------------------------")
+  // console.log("canvas");
+  // console.log(canvas);
+  // console.log("--------------------------------")
+  // console.log("graphics");
+  // console.log(graphics1);
+  // console.log(graphics2);
+  // console.log("--------------------------------")
+  // console.log("easycam.renderer");
+  // console.log(easycam1.renderer);
+  // console.log(easycam2.renderer);
+  // console.log("--------------------------------")
+  // console.log("easycam.graphics");
+  // console.log(easycam1.graphics);
+  // console.log(easycam2.graphics);
+  // console.log("--------------------------------")
+
 } 
 
 

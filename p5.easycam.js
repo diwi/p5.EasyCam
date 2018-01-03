@@ -67,7 +67,7 @@ var EasyCam = class {
   constructor(renderer, args) {
     
 
-    // webgl renderer required
+    // WEBGL renderer required
     if(!(renderer instanceof p5.RendererGL)){
       console.log("renderer needs to be an instance of p5.RendererGL");
       return;
@@ -81,30 +81,17 @@ var EasyCam = class {
     if(args.viewport === undefined) args.viewport  = [0, 0, renderer.width, renderer.height];
    
 
-    
     // library info
     this.INFO = INFO;
-    
-    
+
     // set renderer, graphics, p5
     // this.renderer;
     // this.graphics;
-    // this.P5;
     this.setCanvas(renderer);
-    
-    // console.log("----easycam----");
-    // console.log("easycam.renderer");
-    // console.log(this.renderer);
-    // console.log("easycam.graphics");
-    // console.log(this.graphics);
-    // console.log("easycam.P5");
-    // console.log(this.P5);
-    // console.log("----easycam----");
-    
+
     // self reference
     var cam = this;
     this.cam = cam;
-    
     
     // some constants
     this.LOOK = [0, 0, 1];
@@ -169,12 +156,13 @@ var EasyCam = class {
       mwheel : 0,
       
       isPressed : false,
-      shiftKeyDown : false,
+      button : -1,
       
       mouseDragLeft   : cam.mouseDragRotate,
       mouseDragCenter : cam.mouseDragPan,
       mouseDragRight  : cam.mouseDragZoom,
       mouseWheelAction: cam.mouseWheelZoom,
+     
       
       insideViewport : function(x, y){
         var x0 = cam.viewport[0], x1 = x0 + cam.viewport[2];
@@ -182,21 +170,12 @@ var EasyCam = class {
         return (x > x0) && (x < x1) && (y > y0) && (y < y1);
       },
       
-
-      updateDragConstraint : function(){
-
+      solveConstraint : function(){
         var dx = this.dist[0];
         var dy = this.dist[1];
         
-        var shiftKeyDown = cam.P5.keyIsDown(cam.P5.SHIFT);
-        
-        // on shift key released
-        if(!shiftKeyDown && this.shiftKeyDown !== shiftKeyDown){
-          cam.SHIFT_CONSTRAINT = 0;
-        }
-        this.shiftKeyDown = shiftKeyDown;
-        
-        if (this.shiftKeyDown && !cam.SHIFT_CONSTRAINT && Math.abs(dx - dy) > 1) {
+        // YAW, PITCH
+        if (this.shiftKey && !cam.SHIFT_CONSTRAINT && Math.abs(dx - dy) > 1) {
           cam.SHIFT_CONSTRAINT = Math.abs(dx) > Math.abs(dy) ? cam.AXIS.YAW : cam.AXIS.PITCH;
         }
         
@@ -207,8 +186,10 @@ var EasyCam = class {
       },
       
       mousedown : function(event){
+    
         // console.log("pressed");
         var mouse = cam.mouse;
+        mouse.winref = event.view;
         var x = event.x;
         var y = event.y;
         if(mouse.insideViewport(x, y)){
@@ -219,6 +200,7 @@ var EasyCam = class {
           mouse.dist[1] = 0;
           
           mouse.isPressed = true;
+          mouse.button = event.button;
           cam.SHIFT_CONSTRAINT = 0;
         }
       },
@@ -227,20 +209,21 @@ var EasyCam = class {
         // console.log("update");
         var mouse = cam.mouse;
         if(mouse.isPressed){
+          // console.log(mouse.winref);
           mouse.prev[0] = mouse.curr[0];
           mouse.prev[1] = mouse.curr[1];
           
-          mouse.curr[0] = cam.P5.mouseX;
-          mouse.curr[1] = cam.P5.mouseY;
+          mouse.curr[0] = window.mouseX;
+          mouse.curr[1] = window.mouseY;
           
           mouse.dist[0] = -(mouse.curr[0] - mouse.prev[0]);
           mouse.dist[1] = -(mouse.curr[1] - mouse.prev[1]);
           
-          mouse.updateDragConstraint();
+          mouse.solveConstraint();
           
-          if(cam.P5.mouseButton === cam.P5.LEFT   && mouse.mouseDragLeft  ) mouse.mouseDragLeft();
-          if(cam.P5.mouseButton === cam.P5.CENTER && mouse.mouseDragCenter) mouse.mouseDragCenter();
-          if(cam.P5.mouseButton === cam.P5.RIGHT  && mouse.mouseDragRight ) mouse.mouseDragRight();
+          if(mouse.button === 0 && mouse.mouseDragLeft  ) mouse.mouseDragLeft();
+          if(mouse.button === 1 && mouse.mouseDragCenter) mouse.mouseDragCenter();
+          if(mouse.button === 2 && mouse.mouseDragRight ) mouse.mouseDragRight();
         }
       },
       
@@ -268,13 +251,36 @@ var EasyCam = class {
           if(mouse.mouseWheelAction) mouse.mouseWheelAction();
         }
       },
+      
+      
+      // key-event for shift constraints
+      shiftKey : false,
+   
+      keydown : function(event){
+        var mouse = cam.mouse;
+        if(!mouse.shiftKey){
+          mouse.shiftKey   = (event.keyCode === 16);
+        }
+      },
+      
+      keyup : function(event){
+        var mouse = cam.mouse;
+        if(mouse.shiftKey){
+          mouse.shiftKey = (event.keyCode !== 16);
+          if(!mouse.shiftKey){
+            cam.SHIFT_CONSTRAINT = 0;
+          }
+        }
+      }
+      
     };
-    this.counter = 0;
+    
+    
 
     // camera mouse listeners
     this.attachMouseListeners();
    
-    // p5 registered callbacks
+    // p5 registered callbacks, TODO unregister on dispose
     this.auto_update = true;
     p5.prototype.registerMethod('pre', function(){ 
       if(cam.auto_update){
@@ -301,7 +307,6 @@ var EasyCam = class {
   
   setCanvas(renderer){
     if(renderer instanceof p5.RendererGL){
-      
       // p5js seems to be not very clear about this
       // ... pretty confusing, so i guess this could change in future releases
       this.renderer = renderer;
@@ -310,33 +315,39 @@ var EasyCam = class {
       } else {
         this.graphics = renderer._pInst;
       }
-      this.P5 = this.graphics._pInst;
     } else {
       this.graphics = undefined;
       this.renderer = undefined;
     }
   }
-  
-  
+
   getCanvas(){
     return this.renderer;
   }
   
   
   
-  attachListener(element, ev, fx, opt){
-    if(element && !fx.attached){
-      element.addEventListener(ev, fx, opt);
-      fx.attached = true;
-    } 
+  attachListener(el, ev, fx, op){
+    if(!el || (el === fx.el)){
+      return;
+    }
+    
+    this.detachListener(fx);
+
+    fx.el = el;
+    fx.ev = ev;
+    fx.op = op;
+    fx.el.addEventListener(fx.ev, fx, fx.op);
   }
   
-  detachListener(element, ev, fx, opt){
-    if(element && fx.attached){
-      element.removeEventListener(ev, fx, opt);
-      fx.attached = false;
-    } 
+  detachListener(fx){
+    if(fx.el) {
+      fx.el.removeEventListener(fx.ev, fx, fx.op);
+      fx.el = undefined;
+    }
   }
+  
+
   
   attachMouseListeners(renderer){
     var cam = this.cam;
@@ -345,13 +356,15 @@ var EasyCam = class {
     renderer = renderer || cam.renderer;
     if(renderer){
       
-      var opt = { passive:true };
-      cam.mouseEventTarget = renderer.elt;
+      var op = { passive:true };
+      var el = renderer.elt;
       
-      cam.attachListener(cam.mouseEventTarget, 'mousedown', mouse.mousedown, opt);
-      cam.attachListener(cam.mouseEventTarget, 'mouseup'  , mouse.mouseup  , opt);
-      cam.attachListener(cam.mouseEventTarget, 'dblclick' , mouse.dblclick , opt);
-      cam.attachListener(cam.mouseEventTarget, 'wheel'    , mouse.wheel    , opt);
+      cam.attachListener(el    , 'mousedown', mouse.mousedown, op);
+      cam.attachListener(el    , 'mouseup'  , mouse.mouseup  , op);
+      cam.attachListener(el    , 'dblclick' , mouse.dblclick , op);
+      cam.attachListener(el    , 'wheel'    , mouse.wheel    , op);
+      cam.attachListener(window, 'keydown'  , mouse.keydown  , op);
+      cam.attachListener(window, 'keyup'    , mouse.keyup    , op);
     }
   }
   
@@ -359,16 +372,12 @@ var EasyCam = class {
     var cam = this.cam;
     var mouse = cam.mouse;
        
-    if(cam.mouseEventTarget){
-      var opt = { passive:true };
-   
-      cam.detachListener(cam.mouseEventTarget, 'mousedown', mouse.mousedown, opt);
-      cam.detachListener(cam.mouseEventTarget, 'mouseup'  , mouse.mouseup  , opt);
-      cam.detachListener(cam.mouseEventTarget, 'dblclick' , mouse.dblclick , opt);
-      cam.detachListener(cam.mouseEventTarget, 'wheel'    , mouse.wheel    , opt);
-      
-      cam.mouseEventTarget = undefined;
-    }
+    cam.detachListener(mouse.mousedown);
+    cam.detachListener(mouse.mouseup  );
+    cam.detachListener(mouse.dblclick );
+    cam.detachListener(mouse.wheel    );
+    cam.detachListener(mouse.keydown  );
+    cam.detachListener(mouse.keyup    );
   }
   
   
@@ -433,18 +442,16 @@ var EasyCam = class {
 
     var cam = this.cam;
     renderer = renderer || cam.renderer;
-    if(!renderer){
-      return;
+    
+    if(renderer){
+      this.camEYE = this.getPosition(this.camEYE);   
+      this.camLAT = this.getCenter  (this.camLAT);
+      this.camRUP = this.getUpVector(this.camRUP);
+      
+      renderer.camera(this.camEYE[0], this.camEYE[1], this.camEYE[2],
+                      this.camLAT[0], this.camLAT[1], this.camLAT[2],
+                      this.camRUP[0], this.camRUP[1], this.camRUP[2]);
     }
- 
-    
-    this.camEYE = this.getPosition(this.camEYE);   
-    this.camLAT = this.getCenter  (this.camLAT);
-    this.camRUP = this.getUpVector(this.camRUP);
-    
-    renderer.camera(this.camEYE[0], this.camEYE[1], this.camEYE[2],
-                    this.camLAT[0], this.camLAT[1], this.camLAT[2],
-                    this.camRUP[0], this.camRUP[1], this.camRUP[2]);
 
   }
   

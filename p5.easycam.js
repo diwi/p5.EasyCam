@@ -316,7 +316,6 @@ var EasyCam = class {
         this.graphics = renderer;
       } else {
         this.graphics = renderer._pInst;
-        cam.P5
       }
       this.P5 = this.graphics._pInst;
     } else {

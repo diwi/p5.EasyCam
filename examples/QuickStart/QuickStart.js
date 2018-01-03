@@ -18,35 +18,23 @@
  */
  
  
+//
+// Simple Demo to get started.
+//
 
-// var easycam;
+
+var easycam;
 
 function setup() { 
   var canvas = createCanvas(windowWidth, windowHeight, WEBGL);
   setAttributes('antialias', true);
   console.log(Dw.EasyCam.INFO);
 
-  // easycam = new Dw.EasyCam(this._renderer, {distance : 600});
   easycam = createEasyCam();
-  
-  // some debug stuff, p5 is quite confusing at this point
-  // console.log("--------------------------------")
-  // console.log("this");
-  // console.log(this);
-  // console.log("--------------------------------")
-  // console.log("canvas");
-  // console.log(canvas);
-  // console.log("--------------------------------")
-  // console.log("easycam.renderer");
-  // console.log(easycam.renderer);
-  // console.log("--------------------------------")
-  // console.log("easycam.graphics");
-  // console.log(easycam.graphics);
-  // console.log("--------------------------------")
-  // console.log("easycam.P5");
-  // console.log(easycam.P5);
-  // console.log("--------------------------------")
-  
+  // easycam = new Dw.EasyCam(this._renderer, {distance : 600}); 
+  console.log(this);
+
+  console.log(this.p5);
 } 
 
 

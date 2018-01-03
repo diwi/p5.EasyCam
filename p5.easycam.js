@@ -87,6 +87,7 @@ var EasyCam = class {
     // set renderer, graphics, p5
     // this.renderer;
     // this.graphics;
+    // this.P5
     this.setCanvas(renderer);
 
     // self reference
@@ -192,6 +193,7 @@ var EasyCam = class {
         mouse.winref = event.view;
         var x = event.x;
         var y = event.y;
+
         if(mouse.insideViewport(x, y)){
           mouse.curr[0] = mouse.prev[0] = x;
           mouse.curr[1] = mouse.prev[1] = y;
@@ -213,8 +215,8 @@ var EasyCam = class {
           mouse.prev[0] = mouse.curr[0];
           mouse.prev[1] = mouse.curr[1];
           
-          mouse.curr[0] = window.mouseX;
-          mouse.curr[1] = window.mouseY;
+          mouse.curr[0] = cam.P5.mouseX;
+          mouse.curr[1] = cam.P5.mouseY;
           
           mouse.dist[0] = -(mouse.curr[0] - mouse.prev[0]);
           mouse.dist[1] = -(mouse.curr[1] - mouse.prev[1]);
@@ -314,7 +316,9 @@ var EasyCam = class {
         this.graphics = renderer;
       } else {
         this.graphics = renderer._pInst;
+        cam.P5
       }
+      this.P5 = this.graphics._pInst;
     } else {
       this.graphics = undefined;
       this.renderer = undefined;

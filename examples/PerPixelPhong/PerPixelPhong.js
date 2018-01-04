@@ -149,13 +149,15 @@ function draw () {
   setPointlight(phongshader, pointlights);
   
   
-  
-  
   //////////////////////////////////////////////////////////////////////////////
   //
   // scene, material-uniforms
   //
   //////////////////////////////////////////////////////////////////////////////
+ 
+  // projection
+  perspective(60 * PI/180, width/height, 1, 5000);
+ 
  
   background(16);
   noStroke();

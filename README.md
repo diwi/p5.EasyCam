@@ -17,6 +17,7 @@ Java Version of this project: https://github.com/diwi/peasycam/tree/PeasyCam3
 - [QuickStart_Ortho](https://diwi.github.io/p5.EasyCam/examples/QuickStart_Ortho/)
 - [SplitView](https://diwi.github.io/p5.EasyCam/examples/SplitView/)
 - [MultiView](https://diwi.github.io/p5.EasyCam/examples/MultiView/)
+- [PerPixelPhong](https://diwi.github.io/p5.EasyCam/examples/PerPixelPhong/)
 
 
 ## Usage
@@ -52,5 +53,7 @@ for now, the Java API should do it:
 ## Screenshots
 
 ![MultiView](screenshots/MultiView.jpg)
+
+![PerPixelPhong](screenshots/PerPixelPhong.jpg)
 
 ![CameraStates](screenshots/CameraStates.jpg)

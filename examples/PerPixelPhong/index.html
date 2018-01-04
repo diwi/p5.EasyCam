@@ -131,8 +131,7 @@
       vec3 vertNormal = normalize(uNormalMatrix * var_vertNormal);
       vec3 vertPos    = (uModelViewMatrix * vec4(var_vertPos, 1)).xyz;
       vec3 vertDir    = -normalize(vertPos);
-      
-      
+
       // summed up light contributions
       vec3 fragcol = vec3(0.0);
   
@@ -155,7 +154,7 @@
         float ks = getKs(vertNormal, lightDir, vertDir);
       
         fragcol += material.diff * light.col * kd;
-        fragcol += material.spec * light.col * ks;
+        fragcol += material.spec * light.col * ks * (1.0 - step(kd, 0.0));
       }
       
       // pointlights
@@ -176,10 +175,10 @@
         float ks = getKs(vertNormal, lightDir, vertDir);
         
         fragcol += material.diff * light.col * kd * att;
-        fragcol += material.spec * light.col * ks * att;
+        fragcol += material.spec * light.col * ks * att * (1.0 - step(kd, 0.0));
       }
       
-      
+
       // frag, out
       gl_FragColor = vec4(fragcol, 1);
       

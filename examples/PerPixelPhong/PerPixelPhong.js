@@ -23,9 +23,9 @@
 // Per Pixel Phong lightning:
 //
 // The lighting calculations for the diffuse and specular contributions are
-// all done in the fragment shader, per pixel
+// all done in the fragment shader, per pixel.
 //
-// Lights positions/directions are transformed to cameraspace before they are 
+// Light-positions/directions are transformed to camera-space before they are 
 // passed to the shader.
 //
 

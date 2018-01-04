@@ -30,7 +30,7 @@ var Dw = {};
 const INFO = 
 {
   LIBRARY : "p5.EasyCam",
-  VERSION : "1.0.4",
+  VERSION : "1.0.5",
   AUTHOR  : "Thomas Diewald",
   SOURCE  : "https://github.com/diwi/p5.EasyCam",
   
@@ -187,10 +187,10 @@ var EasyCam = class {
       },
       
       mousedown : function(event){
-    
+
         // console.log("pressed");
         var mouse = cam.mouse;
-        mouse.winref = event.view;
+
         var x = event.x;
         var y = event.y;
 
@@ -211,10 +211,9 @@ var EasyCam = class {
         // console.log("update");
         var mouse = cam.mouse;
         if(mouse.isPressed){
-          // console.log(mouse.winref);
           mouse.prev[0] = mouse.curr[0];
           mouse.prev[1] = mouse.curr[1];
-          
+         
           mouse.curr[0] = cam.P5.mouseX;
           mouse.curr[1] = cam.P5.mouseY;
           
@@ -282,9 +281,9 @@ var EasyCam = class {
     // camera mouse listeners
     this.attachMouseListeners();
    
-    // p5 registered callbacks, TODO unregister on dispose
+    // P5 registered callbacks, TODO unregister on dispose
     this.auto_update = true;
-    p5.prototype.registerMethod('pre', function(){ 
+    this.P5.registerMethod('pre', function(){
       if(cam.auto_update){
         cam.update(); 
       }

@@ -17,7 +17,10 @@
  * 
  */
  
- 
+//
+// p5.EasyCam, testing Instance Mode
+//
+
 
 new p5(function(sketch){
 

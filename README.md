@@ -12,13 +12,11 @@ Java Version of this project: https://github.com/diwi/peasycam/tree/PeasyCam3
 
 - [PerPixelPhong](https://diwi.github.io/p5.EasyCam/examples/PerPixelPhong/)
 - [RandomBoxes](https://diwi.github.io/p5.EasyCam/examples/RandomBoxes/)
-
 - [CameraStates](https://diwi.github.io/p5.EasyCam/examples/CameraStates/)
 - [CameraStates_Basic](https://diwi.github.io/p5.EasyCam/examples/CameraStates_Basic/)
 - [HeadUpDisplay](https://diwi.github.io/p5.EasyCam/examples/HeadUpDisplay/)
 - [QuickStart](https://diwi.github.io/p5.EasyCam/examples/QuickStart/)
 - [QuickStart_Ortho](https://diwi.github.io/p5.EasyCam/examples/QuickStart_Ortho/)
-
 - [SplitView](https://diwi.github.io/p5.EasyCam/examples/SplitView/)
 - [MultiView](https://diwi.github.io/p5.EasyCam/examples/MultiView/)
 

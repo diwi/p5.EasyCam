@@ -194,7 +194,7 @@
       gl_FragColor = vec4(fragcol, 1);
       
       // gamma, 2.2
-      // gl_FragColor.xyz = pow(gl_FragColor.xyz, vec3(1.0/2.2));
+      gl_FragColor.xyz = pow(gl_FragColor.xyz, vec3(1.0/2.2));
       
       gl_FragColor = clamp(gl_FragColor, vec4(0.0), vec4(1.0));
 

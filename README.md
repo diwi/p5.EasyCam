@@ -1,3 +1,6 @@
+![MultiView](screenshots/RandomBoxes_crop.jpg)
+
+
 # p5.EasyCam
 
 Simple 3D camera control for p5js and the WEBGL renderer.
@@ -59,3 +62,5 @@ for now, the Java API should do it:
 ![PerPixelPhong](screenshots/PerPixelPhong.jpg)
 
 ![CameraStates](screenshots/CameraStates.jpg)
+
+![MultiView](screenshots/RandomBoxes.jpg)

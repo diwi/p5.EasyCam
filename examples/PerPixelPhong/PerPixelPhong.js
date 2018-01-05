@@ -41,7 +41,6 @@ var phongshader;
 // }
 
 
-
 function setup () {
   
   createCanvas(windowWidth, windowHeight, WEBGL);
@@ -53,7 +52,6 @@ function setup () {
   var phong_frag = document.getElementById("phong.frag").textContent;
   
   phongshader = new p5.Shader(this._renderer, phong_vert, phong_frag);
-
 }
 
 function windowResized() {
@@ -86,8 +84,12 @@ function draw () {
   var pl_x = cos(angle) * radius;
   var pl_y = sin(angle) * radius;
   
-  var pl_z = (sin(frameCount * 0.05) * 0.5 + 0.5) * 150;
+  var pl_z  = (sin(frameCount * 0.05) * 0.5 + 0.5) * 150;
+  var pl_z2 = (sin(frameCount * 0.1) * 0.5 + 0.5) * 50;
   
+  var radius1 = 400 + sin(frameCount * 0.1) * 30;
+  var pl_x1 = cos(angle) * radius1;
+  var pl_y1 = sin(angle) * radius1;
   
   //////////////////////////////////////////////////////////////////////////////
   //
@@ -101,28 +103,34 @@ function draw () {
     spec_exp : 400.0,
   };
   
+  var matDark = {
+    diff     : [0.1,0.15,0.2],
+    spec     : [1,1,1],
+    spec_exp : 400.0,
+  };
+  
   var matRed = {
-    diff     : [1,0.05,0],
+    diff     : [1,0.05,0.01],
     spec     : [1,0,0],
-    spec_exp : 800.0,
+    spec_exp : 400.0,
   };
   
   var matBlue = {
-    diff     : [0,0.05,1],
+    diff     : [0.01,0.05,1],
     spec     : [0,0,1],
-    spec_exp : 100.0,
+    spec_exp : 400.0,
   };
   
   var matGreen = {
-    diff     : [0.05,1,0],
+    diff     : [0.05,1,0.01],
     spec     : [0,1,0],
-    spec_exp : 800.0,
+    spec_exp : 400.0,
   };
   
   var matYellow = {
-    diff     : [1,1,0],
+    diff     : [1,1,0.01],
     spec     : [1,1,0],
-    spec_exp : 100.0,
+    spec_exp : 400.0,
   };
   
   var materials = [ matWhite, matRed, matBlue, matGreen, matYellow ];
@@ -138,25 +146,23 @@ function draw () {
     col : [0.005, 0.01, 0.02],
   };
   
-  
   var directlights = [
     {
       dir : [-1,-1,-2],
-      col : [0.1, 0.075, 0.050],
+      col : [0.1, 0.080, 0.060],
     },
   ];
   
-
   var pointlights = [
     {
-      pos : [pl_x, pl_y, 10,1],
-      col : [1, 0, 0],
+      pos : [pl_x, pl_y, pl_z2,1],
+      col : [1, 0.25, 0],
       att : 400,
     },
     
     {
-      pos : [pl_y, pl_x, 10, 1],
-      col : [0, 0, 1],
+      pos : [pl_y1, pl_x1, 10, 1],
+      col : [0, 0.25, 1],
       att : 400,
     },
     
@@ -181,29 +187,39 @@ function draw () {
   setPointlight(phongshader, pointlights);
   
   
+  
+  // projection
+  perspective(60 * PI/180, width/height, 1, 5000);
+  
+  // clear BG
+  background(16);
+  noStroke();
+ 
+
+ 
+  // display pointlights with just fill();
+  push();
+  var renderer = easycam.renderer;
+  for(var i = 0; i < pointlights.length; i++){
+    var pl = pointlights[i];
+    push();  
+    translate(pl.pos[0], pl.pos[1], pl.pos[2]);
+    fill(pl.col[0]*255, pl.col[1]*255, pl.col[2]*255);
+    sphere(3);
+    pop();
+  }
+  pop();
+
+  
+ 
   //////////////////////////////////////////////////////////////////////////////
   //
   // scene, material-uniforms
   //
   //////////////////////////////////////////////////////////////////////////////
- 
-  // projection
-  perspective(60 * PI/180, width/height, 1, 5000);
- 
- 
-  background(16);
-  noStroke();
   
-
-  // display pointlights as little boxes, just as visual guides
-  for(var i = 0; i < pointlights.length; i++){
-    var pl = pointlights[i];
-    push();  
-    translate(pl.pos[0], pl.pos[1], pl.pos[2]);
-    setMaterial(phongshader, matWhite);
-    box(5);
-    pop();
-  }
+  // reset shader, after fill() was used previously
+  setShader(phongshader);
   
   
   // ground
@@ -216,40 +232,29 @@ function draw () {
 
   push();
   translate(0, 0, 100);
-  setMaterial(phongshader, matWhite);
+  setMaterial(phongshader, matDark);
   sphere(80);
   pop();
   
-  push();  
+  push();
   translate(0, 0, 100);
+  rotateZ(sin(frameCount * 0.01) * PI);
+  rotateX(sin(frameCount * 0.04) * PI*0.1);
   setMaterial(phongshader, matWhite);
-  torus(200, 25, 40, 20);
-  pop();
-  
-  
-  push();
-  rotateZ(frameCount * 0.01);
-  translate(200, 0, 100);
-  rotateX(PI/2);
-  setMaterial(phongshader, matWhite);
-  sphere(50);
-  pop();
-  
-  
-  push();
-  translate(200, 0, 100);
-  setMaterial(phongshader, matWhite);
-  box(20, 100, 200);
-  pop();
-  
-  // push();  
-  // translate(-200, 0, 100);
-  // setMaterial(phongshader, matWhite);
-  // box(50, 50, 200);
-  // pop();
-  
+  torus(200, 25, 50, 25);
 
-  push();  
+  for(var i = 0; i < 5; i++){
+    push();
+    rotateZ(i * PI*2 / 5)
+    translate(200, 0, 0);
+    setMaterial(phongshader, materials[i]);
+    sphere(40);
+    pop();
+  }
+  pop();
+  
+  
+  push();
   translate(0, 300, 130);
   rotateX(PI/2);
   setMaterial(phongshader, matWhite);
@@ -273,11 +278,11 @@ function draw () {
       var ty = y * radius * 2;
       push();
       
-      var idx = (y * NY + x) % materials.length;
+      var idx = 0;//(y * NY + x) % materials.length;
       setMaterial(phongshader, materials[idx]);
       
       translate(tx, ty, 0);
-      box(radius * 1.2);
+      sphere(radius * 0.8);
       pop();
     }
   }

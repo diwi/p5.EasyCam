@@ -216,8 +216,8 @@ var EasyCam = class {
       startInput : function(x, y){
         var mouse = cam.mouse;
         if(mouse.insideViewport(x, y)){
-          mouse.curr[0] = mouse.prev[0] = x;
-          mouse.curr[1] = mouse.prev[1] = y;
+          mouse.prev[0] = mouse.curr[0] = x;
+          mouse.prev[1] = mouse.curr[1] = y;
           
           mouse.dist[0] = 0;
           mouse.dist[1] = 0;
@@ -289,148 +289,118 @@ var EasyCam = class {
       ctouches : undefined,
       ptouches : undefined,
       
+      ctouch_avg : [0,0,0], // [average x, average y, average distance]
+      ptouch_avg : [0,0,0],
+      
+      evaluateTouches : function(){
+        
+        var pd = cam.P5.pixelDensity();
+        
+        var mouse = cam.mouse;
+        var touches = mouse.ctouches;
+        
+        var avg_x = 0.0;
+        var avg_y = 0.0;
+        var avg_d = 0.0;
+        
+        var count = touches.length;
+        
+        for(var i = 0; i < count; i++){
+          avg_x += touches[i].clientX;
+          avg_y += touches[i].clientY;
+        }
+        avg_x /= count;
+        avg_y /= count;
+        
+
+        for(var i = 0; i < count; i++){
+          var dx = avg_x - touches[i].clientX;
+          var dy = avg_y - touches[i].clientY;
+          avg_d += Math.sqrt(dx*dx + dy*dy);
+        }
+        avg_d /= count;
+        
+        // swap old data
+        mouse.ptouch_avg[0] = mouse.ctouch_avg[0];
+        mouse.ptouch_avg[1] = mouse.ctouch_avg[1];
+        mouse.ptouch_avg[2] = mouse.ctouch_avg[2];
+  
+             
+        mouse.ctouch_avg[0] = avg_x;
+        mouse.ctouch_avg[1] = avg_y;
+        mouse.ctouch_avg[2] = avg_d;
+        
+        mouse.prev[0] = mouse.ptouch_avg[0];
+        mouse.prev[1] = mouse.ptouch_avg[1];
+        
+        mouse.curr[0] = mouse.ctouch_avg[0];
+        mouse.curr[1] = mouse.ctouch_avg[1];
+        
+        mouse.dist[0] = -(mouse.curr[0] - mouse.prev[0]) / pd;
+        mouse.dist[1] = -(mouse.curr[1] - mouse.prev[1]) / pd;
+      },
+      
+      
       touchstart : function(event){
         event.preventDefault();
 		    event.stopPropagation();
         
         var mouse = cam.mouse;
 
-        console.log(event);
-        
         mouse.istouchdown = true;
         
-        cam.mouse.ptouches = cam.mouse.touches;
-        cam.mouse.ctouches = event.touches;
+        mouse.ptouches = event.touches;
+        mouse.ctouches = event.touches;
         
-        // if(num_touches === 0){
-          // return;
-        // }
-        // else if(num_touches === 1){
-          // x = touches[0].clientX;
-          // y = touches[0].clientY;
-          // mouse.button = mouse.BUTTON.LMB;
-        // }  
-        // else {
-          // for(var i = 0; i < num_touches; i++){
-            // x += touches[i].clientX;
-            // y += touches[i].clientY;
-          // }
-          
-          // x /= num_touches;
-          // y /= num_touches;
-          // mouse.button = mouse.BUTTON.MMB | mouse.BUTTON.RMB;
-        // }
-    
-        // mouse.startInput(x, y);
-        // mouse.istouchdown = true; 
+        mouse.evaluateTouches();
       },
       
+
       touchmove : function(event){
         event.preventDefault();
 		    event.stopPropagation();
         
-        if(!cam.mouse.istouchdown){
+        var mouse = cam.mouse;
+        
+        if(!mouse.istouchdown){
           return;
         }
         
         var pd = cam.P5.pixelDensity();
-        
-        var mouse = cam.mouse;
 
-        
         // swap current <-> previous
         mouse.ptouches = mouse.ctouches;
         mouse.ctouches = event.touches;
         
-        var ctouches = mouse.ctouches;
-        var ptouches = mouse.ptouches;
-        
-        var num_ctouches = ctouches.length;
-        var num_ptouches = ptouches.length;
+        mouse.evaluateTouches();
         
         mouse.solveConstraint();
-        
-        if(num_ctouches === 1){
-          
-          mouse.prev[0] = ptouches[0].clientX;
-          mouse.prev[1] = ptouches[0].clientY;
-          
-          mouse.curr[0] = ctouches[0].clientX;
-          mouse.curr[1] = ctouches[0].clientY;
        
-          mouse.dist[0] = -(mouse.curr[0] - mouse.prev[0]) / pd;
-          mouse.dist[1] = -(mouse.curr[1] - mouse.prev[1]) / pd;
+
+        if(mouse.ctouches.length === 1){
           
           cam.mouseDragRotate.bind(mouse)();
-        }
-        
-        if(num_ctouches > 1){
           
-          var px = 0, py = 0;
-          var cx = 0, cy = 0;
-
-          for(var i = 0; i < num_ptouches; i++){
-            px += ptouches[i].clientX;
-            py += ptouches[i].clientY;
-          }
+        } else {
           
-          px /= num_ptouches;
-          py /= num_ptouches;
-          
-          for(var i = 0; i < num_ctouches; i++){
-            cx += ctouches[i].clientX;
-            cy += ctouches[i].clientY;
-          }
-          
-          cx /= num_ctouches;
-          cy /= num_ctouches;
-
-          mouse.prev[0] = px;
-          mouse.prev[1] = py;
-          
-          mouse.curr[0] = cx;
-          mouse.curr[1] = cy;
-        
-          mouse.dist[0] = - 2 * (mouse.curr[0] - mouse.prev[0]) / pd;
-          mouse.dist[1] = - 2 * (mouse.curr[1] - mouse.prev[1]) / pd;
+          mouse.dist[0] = 2 * -(mouse.curr[0] - mouse.prev[0]) / pd;
+          mouse.dist[1] = 2 * -(mouse.curr[1] - mouse.prev[1]) / pd;
           
           cam.mouseDragPan.bind(mouse)();
           
-          
-          var pdist = 0.0;
-          
-          for(var i = 0; i < num_ptouches; i++){
-            var dx = px - ptouches[i].clientX;
-            var dy = py - ptouches[i].clientY;
-            pdist += Math.sqrt(dx*dx + dy*dy);
-          }
-          pdist /= num_ptouches;
-          
-          var cdist = 0.0;
-          for(var i = 0; i < num_ctouches; i++){
-            var dx = cx - ctouches[i].clientX;
-            var dy = cy - ctouches[i].clientY;
-            cdist += Math.sqrt(dx*dx + dy*dy);
-          }
-          cdist /= num_ctouches;
-          
-          mouse.dist[0] = 1 * (cdist - pdist) / pd;
-          mouse.dist[1] = 1 * (cdist - pdist) / pd;
-          
+          mouse.dist[0] = (mouse.ctouch_avg[2] - mouse.ptouch_avg[2]) / pd;
+          mouse.dist[1] = (mouse.ctouch_avg[2] - mouse.ptouch_avg[2]) / pd;
+        
           cam.mouseDragZoom.bind(mouse)();
-            
+          
         }
-        
-        
+
       },
       
       touchend : function(event){
         event.preventDefault();
 		    event.stopPropagation();
         cam.mouse.endInput();
-        
-        cam.mouse.touch = undefined;
-        cam.mouse.ptouch = undefined;
       },
       
       

@@ -32,9 +32,9 @@ function setup() {
 
   easycam = createEasyCam();
   // easycam = new Dw.EasyCam(this._renderer, {distance : 600}); 
-  console.log(this);
-
-  console.log(this.p5);
+  
+  // console.log(this);
+  // console.log(this.p5);
 } 
 
 

@@ -35,6 +35,7 @@ var easycam2;
 
 function setup() { 
 
+  pixelDensity(1);
   // p5.BUG
   // var canvas = createCanvas(windowWidth, windowHeight, WEBGL);
   // setAttributes('antialias', true);
@@ -51,8 +52,8 @@ function setup() {
   var graphics1 = createGraphics(w, h, WEBGL)
   var graphics2 = createGraphics(w, h, WEBGL);
 
-  easycam1 = new Dw.EasyCam(graphics1._renderer, {distance : 800});
-  easycam2 = new Dw.EasyCam(graphics2._renderer, {distance : 800});
+  easycam1 = new Dw.EasyCam(graphics1._renderer, {distance : 600});
+  easycam2 = new Dw.EasyCam(graphics2._renderer, {distance : 600});
   
   easycam1.setDistanceMin(10);
   easycam1.setDistanceMax(3000);
@@ -106,7 +107,7 @@ function windowResized() {
   // resize p5.RendererGL
   easycam1.renderer.resize(w,h);
   easycam2.renderer.resize(w,h);
-
+  
   // set new graphics dim
   easycam1.graphics.width  = w;
   easycam1.graphics.height = h;

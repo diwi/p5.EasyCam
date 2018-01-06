@@ -25,7 +25,9 @@
 
 var easycam;
 
-function setup() { 
+function setup() {
+  pixelDensity(1);
+  
   var canvas = createCanvas(windowWidth, windowHeight, WEBGL);
   setAttributes('antialias', true);
   console.log(Dw.EasyCam.INFO);
@@ -33,8 +35,6 @@ function setup() {
   easycam = createEasyCam();
   // easycam = new Dw.EasyCam(this._renderer, {distance : 600}); 
   
-  // console.log(this);
-  // console.log(this.p5);
 } 
 
 

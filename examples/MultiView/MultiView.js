@@ -42,7 +42,10 @@ var NX = 3;
 var NY = 2;
 var cameras;
 
-function setup() { 
+function setup() {
+  
+  pixelDensity(1);
+  
   createCanvas(windowWidth, windowHeight, WEBGL);
 
   setAttributes('antialias', true);
@@ -102,7 +105,7 @@ function setCameraViewports(){
       cameras[id].setViewport([cx, cy, cw, ch]); // this is the key of this whole demo
     }
   }
- 
+
 }
 
 

@@ -286,6 +286,9 @@ var EasyCam = class {
       // touchinput
       //////////////////////////////////////////////////////////////////////////
       touchstart : function(event){
+        event.preventDefault();
+		    event.stopPropagation();
+        
         var mouse = cam.mouse;
         var touches = event.touches;
         var num_touches = touches.length;
@@ -316,6 +319,9 @@ var EasyCam = class {
       },
       
       touchmove : function(event){
+        event.preventDefault();
+		    event.stopPropagation();
+    
         var x = event.touches[0].clientX;
         var y = event.touches[0].clientY;
         if(cam.mouse.istouchdown){
@@ -324,6 +330,8 @@ var EasyCam = class {
       },
       
       touchend : function(event){
+        event.preventDefault();
+		    event.stopPropagation();
         cam.mouse.endInput();
       },
       
@@ -463,11 +471,10 @@ var EasyCam = class {
       cam.attachListener(window, 'keydown'  , mouse.keydown  , op);
       cam.attachListener(window, 'keyup'    , mouse.keyup    , op);
       
-      
-      cam.attachListener(el    , 'touchstart', mouse.touchstart, op);
-      cam.attachListener(el    , 'touchend'  , mouse.touchend  , op);
-      
-      cam.attachListener(el    , 'touchmove' , mouse.touchmove , op);
+      var optouch = { passive:false };
+      cam.attachListener(el    , 'touchstart', mouse.touchstart, optouch);
+      cam.attachListener(el    , 'touchend'  , mouse.touchend  , optouch);
+      cam.attachListener(el    , 'touchmove' , mouse.touchmove , optouch);
     }
   }
   

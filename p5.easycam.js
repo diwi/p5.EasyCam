@@ -30,7 +30,7 @@ var Dw = {};
 const INFO = 
 {
   LIBRARY : "p5.EasyCam",
-  VERSION : "1.0.5",
+  VERSION : "1.0.6",
   AUTHOR  : "Thomas Diewald",
   SOURCE  : "https://github.com/diwi/p5.EasyCam",
   
@@ -156,9 +156,19 @@ var EasyCam = class {
       dist   : [0,0],
       mwheel : 0,
       
-      isPressed : false,
-      button : -1,
+      isPressed   : false, // true if active
       
+      istouchdown : false, // true, if input came from a touch
+      ismousedown : false, // true, if input came from a mouse
+      
+      BUTTON : {
+        LMB : 0x01,
+        MMB : 0x02,
+        RMB : 0x04,
+      },
+      
+      button : 0,
+     
       mouseDragLeft   : cam.mouseDragRotate,
       mouseDragCenter : cam.mouseDragPan,
       mouseDragRight  : cam.mouseDragZoom,
@@ -186,14 +196,25 @@ var EasyCam = class {
         if(cam.SHIFT_CONSTRAINT) cam.DRAG_CONSTRAINT = cam.SHIFT_CONSTRAINT;
       },
       
-      mousedown : function(event){
-
-        // console.log("pressed");
+      update : function(){
         var mouse = cam.mouse;
+        if(mouse.isPressed){
 
-        var x = event.x;
-        var y = event.y;
-
+          mouse.solveConstraint();
+          
+          var LMB = mouse.button & mouse.BUTTON.LMB;
+          var MMB = mouse.button & mouse.BUTTON.MMB;
+          var RMB = mouse.button & mouse.BUTTON.RMB;
+          
+          if(LMB && mouse.mouseDragLeft  ) mouse.mouseDragLeft();
+          if(MMB && mouse.mouseDragCenter) mouse.mouseDragCenter();
+          if(RMB && mouse.mouseDragRight ) mouse.mouseDragRight();
+        }
+      },
+      
+      
+      startInput : function(x, y, button){
+        var mouse = cam.mouse;
         if(mouse.insideViewport(x, y)){
           mouse.curr[0] = mouse.prev[0] = x;
           mouse.curr[1] = mouse.prev[1] = y;
@@ -202,38 +223,109 @@ var EasyCam = class {
           mouse.dist[1] = 0;
           
           mouse.isPressed = true;
-          mouse.button = event.button;
+          mouse.button |= button;
           cam.SHIFT_CONSTRAINT = 0;
         }
       },
       
-      update : function(){
-        // console.log("update");
+      updateInput : function(x, y){
         var mouse = cam.mouse;
         if(mouse.isPressed){
           mouse.prev[0] = mouse.curr[0];
           mouse.prev[1] = mouse.curr[1];
          
-          mouse.curr[0] = cam.P5.mouseX;
-          mouse.curr[1] = cam.P5.mouseY;
+          mouse.curr[0] = x;
+          mouse.curr[1] = y;
           
           mouse.dist[0] = -(mouse.curr[0] - mouse.prev[0]);
           mouse.dist[1] = -(mouse.curr[1] - mouse.prev[1]);
           
-          mouse.solveConstraint();
-          
-          if(mouse.button === 0 && mouse.mouseDragLeft  ) mouse.mouseDragLeft();
-          if(mouse.button === 1 && mouse.mouseDragCenter) mouse.mouseDragCenter();
-          if(mouse.button === 2 && mouse.mouseDragRight ) mouse.mouseDragRight();
+        }
+      },
+      
+      endInput : function(){
+        var mouse = cam.mouse;
+        mouse.isPressed      = false;
+        mouse.istouchdown    = false,
+        mouse.ismousedown    = false,
+        mouse.button         = 0;
+        cam.SHIFT_CONSTRAINT = 0;
+      },
+      
+      
+      
+      //////////////////////////////////////////////////////////////////////////
+      // mouseinput
+      //////////////////////////////////////////////////////////////////////////
+
+      mousedown : function(event){
+        var mouse = cam.mouse;
+        var button = 0;
+        if(event.button === 0) button = mouse.BUTTON.LMB;
+        if(event.button === 1) button = mouse.BUTTON.MMB;
+        if(event.button === 2) button = mouse.BUTTON.RMB;
+        mouse.startInput(event.x, event.y, button);
+        mouse.ismousedown = true; 
+      },
+      
+      mousedrag : function(event){
+        if(cam.mouse.ismousedown){
+          cam.mouse.updateInput(cam.P5.mouseX, cam.P5.mouseY);
         }
       },
       
       mouseup : function(event){
-        // console.log("released");
-        cam.mouse.isPressed = false;
-        cam.SHIFT_CONSTRAINT = 0;
+        cam.mouse.endInput();
       },
       
+      
+      //////////////////////////////////////////////////////////////////////////
+      // touchinput
+      //////////////////////////////////////////////////////////////////////////
+      touchstart : function(event){
+        var mouse = cam.mouse;
+        var touches = event.touches;
+        var num_touches = touches.length;
+        var x = 0, y = 0, button = 0;
+        
+        if(num_touches === 0){
+          return;
+        }
+        else if(num_touches === 1){
+          x = touches[0].clientX;
+          y = touches[0].clientY;
+          button = mouse.BUTTON.LMB;
+        }  
+        else {
+          // TODO
+          for(var i = 0; i < num_touches; i++){
+            x += touches[i].clientX;
+            y += touches[i].clientY;
+          }
+          
+          x /= num_touches;
+          y /= num_touches;
+          button = mouse.BUTTON.MMB | mouse.BUTTON.RMB;
+        }
+    
+        mouse.startInput(x, y, button);
+        mouse.istouchdown = true; 
+      },
+      
+      touchmove : function(event){
+        var x = event.touches[0].clientX;
+        var y = event.touches[0].clientY;
+        if(cam.mouse.istouchdown){
+          cam.mouse.updateInput(x, y);
+        }
+      },
+      
+      touchend : function(event){
+        cam.mouse.endInput();
+      },
+      
+      
+
  
       dblclick : function(event){
         var x = event.x;
@@ -349,8 +441,8 @@ var EasyCam = class {
     }
   }
   
-
   
+
   attachMouseListeners(renderer){
     var cam = this.cam;
     var mouse = cam.mouse;
@@ -367,6 +459,12 @@ var EasyCam = class {
       cam.attachListener(el    , 'wheel'    , mouse.wheel    , op);
       cam.attachListener(window, 'keydown'  , mouse.keydown  , op);
       cam.attachListener(window, 'keyup'    , mouse.keyup    , op);
+      
+      
+      cam.attachListener(el    , 'touchstart', mouse.touchstart, op);
+      cam.attachListener(el    , 'touchend'  , mouse.touchend  , op);
+      
+      cam.attachListener(el    , 'touchmove' , mouse.touchmove , op);
     }
   }
   
@@ -414,6 +512,8 @@ var EasyCam = class {
   update(){
     var cam = this.cam;
     var mouse = cam.mouse;
+    
+    mouse.mousedrag();
     
     mouse.update();
     

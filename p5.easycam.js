@@ -233,12 +233,15 @@ var EasyCam = class {
         if(mouse.isPressed){
           mouse.prev[0] = mouse.curr[0];
           mouse.prev[1] = mouse.curr[1];
+          
+          var pd = cam.P5.pixelDensity();
+          // console.log(pd);
          
           mouse.curr[0] = x;
           mouse.curr[1] = y;
           
-          mouse.dist[0] = -(mouse.curr[0] - mouse.prev[0]);
-          mouse.dist[1] = -(mouse.curr[1] - mouse.prev[1]);
+          mouse.dist[0] = -(mouse.curr[0] - mouse.prev[0]) / pd;
+          mouse.dist[1] = -(mouse.curr[1] - mouse.prev[1]) / pd;
           
         }
       },

@@ -147,6 +147,7 @@ var EasyCam = class {
     // viewport for the mouse-pointer [x,y,w,h]
     this.viewport = args.viewport.slice();
     
+
     // mouse action handler
     this.mouse = {
       cam : cam,
@@ -169,10 +170,16 @@ var EasyCam = class {
       
       button : 0,
      
-      mouseDragLeft   : cam.mouseDragRotate,
-      mouseDragCenter : cam.mouseDragPan   ,
-      mouseDragRight  : cam.mouseDragZoom  ,
-      mouseWheelAction: cam.mouseWheelZoom ,
+      mouseDragLeft   : cam.mouseDragRotate.bind(cam),
+      mouseDragCenter : cam.mouseDragPan   .bind(cam),
+      mouseDragRight  : cam.mouseDragZoom  .bind(cam),
+      mouseWheelAction: cam.mouseWheelZoom .bind(cam),
+      
+      touchmoveSingle : cam.mouseDragRotate.bind(cam),
+      touchmoveMulti  : function(){
+                          cam.mouseDragPan();
+                          cam.mouseDragZoom();
+                        },
      
       
       insideViewport : function(x, y){
@@ -299,9 +306,31 @@ var EasyCam = class {
         }
         avg_d /= count;
         
-        cam.mouse.updateInput(avg_x, avg_y, avg_d);
+        cam.mouse.updateInput(avg_x, avg_y, -avg_d);
       },
       
+      
+      tapedTwice : false,
+       
+      tapHandler : function(event) {
+        if(event.touches.length === 1){
+          
+          var mouse = cam.mouse;
+          
+          if(!mouse.tapedTwice) {
+            mouse.tapedTwice = true;
+            setTimeout( function() { 
+              mouse.tapedTwice = false; 
+            }, 400 );
+          } else {
+            if(mouse.insideViewport(mouse.curr[0], mouse.curr[1])){
+              cam.reset();
+            }
+          }
+        }
+      },
+      
+      // go : false,
       
       touchstart : function(event){
         event.preventDefault();
@@ -309,27 +338,38 @@ var EasyCam = class {
         
         var mouse = cam.mouse;
         
+        mouse.tapHandler(event);
+ 
+        
         mouse.evaluateTouches(event);
         mouse.istouchdown = mouse.insideViewport(mouse.curr[0], mouse.curr[1]);
         mouse.isPressed = (cam.mouse.istouchdown || cam.mouse.ismousedown);
+        
+        var istouchdown = mouse.istouchdown;
+        mouse.istouchdown = false;
+        setTimeout( function() { 
+           mouse.istouchdown = istouchdown; 
+        }, 250 );
       },
       
       touchmove : function(event){
         event.preventDefault();
 		    event.stopPropagation();
         
+        // if(!cam.mouse.go){
+          // return;
+        // }
+        
         var mouse = cam.mouse;
         
+        mouse.evaluateTouches(event);  
+        mouse.solveConstraint();
         if(mouse.istouchdown){
-   
-          mouse.evaluateTouches(event);  
-          mouse.solveConstraint();
-         
+
           if(event.touches.length === 1){
-            cam.mouseDragRotate.bind(mouse)(); 
+            mouse.touchmoveSingle();
           } else {
-            cam.mouseDragPan.bind(mouse)();
-            cam.mouseDragZoom.bind(mouse)();  
+            mouse.touchmoveMulti();
           }
         }
       },
@@ -341,7 +381,6 @@ var EasyCam = class {
         cam.mouse.isPressed = (cam.mouse.istouchdown || cam.mouse.ismousedown);
         cam.SHIFT_CONSTRAINT = 0;
       },
-      
 
       dblclick : function(event){
         var x = event.x;
@@ -383,27 +422,6 @@ var EasyCam = class {
       }
       
     };
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     
     
@@ -561,7 +579,8 @@ var EasyCam = class {
     b_update |= cam.dampedRotZ.update();
     
     // interpolated actions have lower priority then damped actions
-    if(b_update){
+    if(b_update)
+    {
       cam.timedRot .stop();
       cam.timedPan .stop();
       cam.timedzoom.stop();
@@ -599,33 +618,32 @@ var EasyCam = class {
   // mouse state changes
   //
   mouseWheelZoom() {
-    var mouse = this;
-    var cam = this.cam;
+    var cam = this;
+    var mouse = cam.mouse;
     cam.dampedZoom.addForce(mouse.mwheel * cam.scale_zoomwheel);
   }
   
   mouseDragZoom() {
-    var mouse = this;
-    var cam = this.cam;
+    var cam = this;
+    var mouse = cam.mouse;
     cam.dampedZoom.addForce(-mouse.dist[2]);
   }
   
   mouseDragPan() {
-    var mouse = this;
-    var cam = this.cam;
+    var cam = this;
+    var mouse = cam.mouse;
+
     cam.dampedPanX.addForce((cam.DRAG_CONSTRAINT & cam.AXIS.YAW  ) ? mouse.dist[0] : 0);
     cam.dampedPanY.addForce((cam.DRAG_CONSTRAINT & cam.AXIS.PITCH) ? mouse.dist[1] : 0);
   }
   
   mouseDragRotate() {
-    var mouse = this;
-    var cam = this.cam;
+    var cam = this;
+    var mouse = cam.mouse;
     
     var mx = mouse.curr[0], my = mouse.curr[1];
     var dx = mouse.dist[0], dy = mouse.dist[1];
-    
 
-    
     // mouse [-1, +1]
     var mxNdc = Math.min(Math.max((mx - cam.viewport[0]) / cam.viewport[2], 0), 1) * 2 - 1;
     var myNdc = Math.min(Math.max((my - cam.viewport[1]) / cam.viewport[3], 0), 1) * 2 - 1;

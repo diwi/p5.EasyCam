@@ -196,10 +196,46 @@ var EasyCam = class {
         if(cam.SHIFT_CONSTRAINT) cam.DRAG_CONSTRAINT = cam.SHIFT_CONSTRAINT;
       },
       
-      update : function(){
-        var mouse = cam.mouse;
-        if(mouse.isPressed){
 
+      
+      //////////////////////////////////////////////////////////////////////////
+      // mouseinput
+      //////////////////////////////////////////////////////////////////////////
+
+      mousedown : function(event){
+        var mouse = cam.mouse;
+        
+        if(event.button === 0) mouse.button |= mouse.BUTTON.LMB;
+        if(event.button === 1) mouse.button |= mouse.BUTTON.MMB;
+        if(event.button === 2) mouse.button |= mouse.BUTTON.RMB;
+        
+        if(mouse.insideViewport(event.x, event.y)){
+          mouse.prev[0] = mouse.curr[0] = event.x;
+          mouse.prev[1] = mouse.curr[1] = event.y;
+          
+          mouse.dist[0] = 0;
+          mouse.dist[1] = 0;
+          
+          mouse.ismousedown = mouse.button > 0;
+          mouse.isPressed   = mouse.ismousedown;
+          cam.SHIFT_CONSTRAINT = 0;
+        } 
+      },
+      
+      mousedrag : function(event){
+        var mouse = cam.mouse;
+        if(mouse.ismousedown){
+          mouse.prev[0] = mouse.curr[0];
+          mouse.prev[1] = mouse.curr[1];
+          
+          var pd = cam.P5.pixelDensity();
+    
+          mouse.curr[0] = cam.P5.mouseX;
+          mouse.curr[1] = cam.P5.mouseY;
+          
+          mouse.dist[0] = -(mouse.curr[0] - mouse.prev[0]) / pd;
+          mouse.dist[1] = -(mouse.curr[1] - mouse.prev[1]) / pd;
+          
           mouse.solveConstraint();
           
           var LMB = mouse.button & mouse.BUTTON.LMB;
@@ -212,72 +248,16 @@ var EasyCam = class {
         }
       },
       
-      
-      startInput : function(x, y){
-        var mouse = cam.mouse;
-        if(mouse.insideViewport(x, y)){
-          mouse.prev[0] = mouse.curr[0] = x;
-          mouse.prev[1] = mouse.curr[1] = y;
-          
-          mouse.dist[0] = 0;
-          mouse.dist[1] = 0;
-          
-          mouse.isPressed = true;
-          cam.SHIFT_CONSTRAINT = 0;
-        }
-      },
-      
-      updateInput : function(x, y){
-        var mouse = cam.mouse;
-        if(mouse.isPressed){
-          mouse.prev[0] = mouse.curr[0];
-          mouse.prev[1] = mouse.curr[1];
-          
-          var pd = cam.P5.pixelDensity();
-          // console.log(pd);
-         
-          mouse.curr[0] = x;
-          mouse.curr[1] = y;
-          
-          mouse.dist[0] = -(mouse.curr[0] - mouse.prev[0]) / pd;
-          mouse.dist[1] = -(mouse.curr[1] - mouse.prev[1]) / pd;
-          
-        }
-      },
-      
-      endInput : function(){
-        var mouse = cam.mouse;
-        mouse.isPressed      = false;
-        mouse.istouchdown    = false,
-        mouse.ismousedown    = false,
-        mouse.button         = 0;
-        cam.SHIFT_CONSTRAINT = 0;
-      },
-      
-      
-      
-      //////////////////////////////////////////////////////////////////////////
-      // mouseinput
-      //////////////////////////////////////////////////////////////////////////
-
-      mousedown : function(event){
-        var mouse = cam.mouse;
-        mouse.button = 0;
-        if(event.button === 0) mouse.button = mouse.BUTTON.LMB;
-        if(event.button === 1) mouse.button = mouse.BUTTON.MMB;
-        if(event.button === 2) mouse.button = mouse.BUTTON.RMB;
-        mouse.startInput(event.x, event.y);
-        mouse.ismousedown = true; 
-      },
-      
-      mousedrag : function(event){
-        if(cam.mouse.ismousedown){
-          cam.mouse.updateInput(cam.P5.mouseX, cam.P5.mouseY);
-        }
-      },
-      
       mouseup : function(event){
-        cam.mouse.endInput();
+        var mouse = cam.mouse;
+        
+        if(event.button === 0) mouse.button &= ~mouse.BUTTON.LMB;
+        if(event.button === 1) mouse.button &= ~mouse.BUTTON.MMB;
+        if(event.button === 2) mouse.button &= ~mouse.BUTTON.RMB;
+        
+        cam.mouse.ismousedown = mouse.button > 0;
+        cam.mouse.isPressed = (cam.mouse.istouchdown || cam.mouse.ismousedown);
+        cam.SHIFT_CONSTRAINT = 0;
       },
       
       
@@ -292,11 +272,16 @@ var EasyCam = class {
       ctouch_avg : [0,0,0], // [average x, average y, average distance]
       ptouch_avg : [0,0,0],
       
-      evaluateTouches : function(){
+      evaluateTouches : function(event){
         
         var pd = cam.P5.pixelDensity();
         
         var mouse = cam.mouse;
+        
+        // swap current <-> previous
+        mouse.ptouches = mouse.ctouches;
+        mouse.ctouches = event.touches;
+        
         var touches = mouse.ctouches;
         
         var avg_x = 0.0;
@@ -320,12 +305,11 @@ var EasyCam = class {
         }
         avg_d /= count;
         
-        // swap old data
+        // swap current <-> previous
         mouse.ptouch_avg[0] = mouse.ctouch_avg[0];
         mouse.ptouch_avg[1] = mouse.ctouch_avg[1];
         mouse.ptouch_avg[2] = mouse.ctouch_avg[2];
-  
-             
+    
         mouse.ctouch_avg[0] = avg_x;
         mouse.ctouch_avg[1] = avg_y;
         mouse.ctouch_avg[2] = avg_d;
@@ -346,13 +330,15 @@ var EasyCam = class {
 		    event.stopPropagation();
         
         var mouse = cam.mouse;
-
+        
         mouse.istouchdown = true;
+        mouse.evaluateTouches(event);
         
-        mouse.ptouches = event.touches;
-        mouse.ctouches = event.touches;
+        if(!mouse.insideViewport(mouse.curr[0], mouse.curr[1])){
+          mouse.istouchdown = false;
+        }
         
-        mouse.evaluateTouches();
+        cam.mouse.isPressed = (cam.mouse.istouchdown || cam.mouse.ismousedown);
       },
       
 
@@ -368,21 +354,18 @@ var EasyCam = class {
         
         var pd = cam.P5.pixelDensity();
 
-        // swap current <-> previous
-        mouse.ptouches = mouse.ctouches;
-        mouse.ctouches = event.touches;
-        
-        mouse.evaluateTouches();
-        
+        mouse.evaluateTouches(event);  
         mouse.solveConstraint();
        
-
+       
         if(mouse.ctouches.length === 1){
           
+          // single touch for rotation
           cam.mouseDragRotate.bind(mouse)();
           
         } else {
           
+          // multi touch for pan and zoom
           mouse.dist[0] = 2 * -(mouse.curr[0] - mouse.prev[0]) / pd;
           mouse.dist[1] = 2 * -(mouse.curr[1] - mouse.prev[1]) / pd;
           
@@ -394,18 +377,17 @@ var EasyCam = class {
           cam.mouseDragZoom.bind(mouse)();
           
         }
-
       },
       
       touchend : function(event){
         event.preventDefault();
 		    event.stopPropagation();
-        cam.mouse.endInput();
+        cam.mouse.istouchdown = false,
+        cam.mouse.isPressed = (cam.mouse.istouchdown || cam.mouse.ismousedown);
+        cam.SHIFT_CONSTRAINT = 0;
       },
       
       
-
- 
       dblclick : function(event){
         var x = event.x;
         var y = event.y;
@@ -614,9 +596,7 @@ var EasyCam = class {
     var mouse = cam.mouse;
     
     mouse.mousedrag();
-    
-    mouse.update();
-    
+
     var b_update = false;
     b_update |= cam.dampedZoom.update();
     b_update |= cam.dampedPanX.update();

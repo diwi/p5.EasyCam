@@ -137,7 +137,7 @@ function draw(){
     displayScene(cam);
     pop();
   }
-  
+
 }
 
 
@@ -162,6 +162,7 @@ function displayScene(cam){
   // scissors-test and viewport transformation
   setGLGraphicsViewport(x,y_inv,w,h);
   
+
   // modelview - using camera state
   cam.apply(this);
   

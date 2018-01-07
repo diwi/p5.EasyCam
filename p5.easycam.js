@@ -309,67 +309,38 @@ var EasyCam = class {
         cam.mouse.updateInput(avg_x, avg_y, -avg_d);
       },
       
-      
-      tapedTwice : false,
-       
-      tapHandler : function(event) {
-        if(event.touches.length === 1){
-          
-          var mouse = cam.mouse;
-          
-          if(!mouse.tapedTwice) {
-            mouse.tapedTwice = true;
-            setTimeout( function() { 
-              mouse.tapedTwice = false; 
-            }, 400 );
-          } else {
-            if(mouse.insideViewport(mouse.curr[0], mouse.curr[1])){
-              cam.reset();
-            }
-          }
-        }
-      },
-      
-      // go : false,
-      
+
       touchstart : function(event){
         event.preventDefault();
 		    event.stopPropagation();
         
         var mouse = cam.mouse;
         
-        mouse.tapHandler(event);
- 
-        
         mouse.evaluateTouches(event);
+        
         mouse.istouchdown = mouse.insideViewport(mouse.curr[0], mouse.curr[1]);
         mouse.isPressed = (cam.mouse.istouchdown || cam.mouse.ismousedown);
-        
-        var istouchdown = mouse.istouchdown;
-        mouse.istouchdown = false;
-        setTimeout( function() { 
-           mouse.istouchdown = istouchdown; 
-        }, 250 );
+    
+        mouse.dbltap(event);
+ 
       },
       
       touchmove : function(event){
         event.preventDefault();
 		    event.stopPropagation();
         
-        // if(!cam.mouse.go){
-          // return;
-        // }
-        
         var mouse = cam.mouse;
         
-        mouse.evaluateTouches(event);  
-        mouse.solveConstraint();
         if(mouse.istouchdown){
+          
+          mouse.evaluateTouches(event);  
+          mouse.solveConstraint();
 
           if(event.touches.length === 1){
             mouse.touchmoveSingle();
           } else {
             mouse.touchmoveMulti();
+            mouse.tapcount = 0;
           }
         }
       },
@@ -377,11 +348,32 @@ var EasyCam = class {
       touchend : function(event){
         event.preventDefault();
 		    event.stopPropagation();
-        cam.mouse.istouchdown = false,
-        cam.mouse.isPressed = (cam.mouse.istouchdown || cam.mouse.ismousedown);
+        
+        var mouse = cam.mouse;
+        mouse.istouchdown = false,
+        mouse.isPressed = (mouse.istouchdown || mouse.ismousedown);
         cam.SHIFT_CONSTRAINT = 0;
+        
+        if(mouse.tapcount >= 2){
+          if(mouse.insideViewport(mouse.curr[0], mouse.curr[1])){
+            cam.reset();
+          }
+          mouse.tapcount = 0;
+        }
       },
 
+      
+      tapcount : 0,
+       
+      dbltap : function(event) {
+        if(cam.mouse.tapcount++ == 0) {
+          setTimeout( function() { 
+            cam.mouse.tapcount = 0; 
+          }, 350 );
+        } 
+      },
+      
+      
       dblclick : function(event){
         var x = event.x;
         var y = event.y;
@@ -579,8 +571,7 @@ var EasyCam = class {
     b_update |= cam.dampedRotZ.update();
     
     // interpolated actions have lower priority then damped actions
-    if(b_update)
-    {
+    if(b_update){
       cam.timedRot .stop();
       cam.timedPan .stop();
       cam.timedzoom.stop();

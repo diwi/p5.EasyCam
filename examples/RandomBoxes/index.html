@@ -15,7 +15,7 @@
   <script id="phong.vert" type="x-shader/x-vertex"> 
   
     #ifdef GL_ES
-      precision mediump float;
+      precision highp float;
       precision mediump int;
     #endif
 
@@ -52,7 +52,7 @@
   <script id="phong.frag" type="x-shader/x-fragment">
   
     #ifdef GL_ES
-      precision mediump float;
+      precision highp float;
       precision mediump int;
     #endif
 
@@ -103,6 +103,7 @@
     
     // materials
     uniform Material material;
+    
 
     float smootherstep(float edge0, float edge1, float x) {
       x = clamp((x - edge0) / (edge1 - edge0), 0.0, 1.0);

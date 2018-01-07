@@ -104,37 +104,37 @@ function draw () {
   var matWhite = {
     diff     : [1,1,1],
     spec     : [1,1,1],
-    spec_exp : 400.0,
+    spec_exp : 200.0,
   };
   
   var matDark = {
     diff     : [0.1,0.15,0.2],
     spec     : [1,1,1],
-    spec_exp : 400.0,
+    spec_exp : 200.0,
   };
   
   var matRed = {
     diff     : [1,0.05,0.01],
     spec     : [1,0,0],
-    spec_exp : 400.0,
+    spec_exp : 200.0,
   };
   
   var matBlue = {
     diff     : [0.01,0.05,1],
     spec     : [0,0,1],
-    spec_exp : 400.0,
+    spec_exp : 200.0,
   };
   
   var matGreen = {
     diff     : [0.05,1,0.01],
     spec     : [0,1,0],
-    spec_exp : 400.0,
+    spec_exp : 200.0,
   };
   
   var matYellow = {
     diff     : [1,1,0.01],
     spec     : [1,1,0],
-    spec_exp : 400.0,
+    spec_exp : 200.0,
   };
   
   var materials = [ matWhite, matRed, matBlue, matGreen, matYellow ];
@@ -147,13 +147,13 @@ function draw () {
   //////////////////////////////////////////////////////////////////////////////
   
   var ambientlight = {
-    col : [0.005, 0.01, 0.02],
+    col : [0.002, 0.006, 0.010],
   };
   
   var directlights = [
     {
       dir : [-1,-1,-2],
-      col : [0.1, 0.080, 0.060],
+      col : [0.02, 0.02, 0.02],
     },
   ];
   
@@ -161,19 +161,19 @@ function draw () {
     {
       pos : [pl_x, pl_y, pl_z2,1],
       col : [1, 0.25, 0],
-      att : 400,
+      att : 800,
     },
     
     {
       pos : [pl_y1, pl_x1, 10, 1],
       col : [0, 0.25, 1],
-      att : 400,
+      att : 800,
     },
     
     {
       pos : [pl_x, 0, pl_z, 1],
-      col : [1, 1, 0],
-      att : 400,
+      col : [1, 0.75, 0.1],
+      att : 800,
     },
   ];
   

@@ -15,7 +15,7 @@
   <script id="phong.vert" type="x-shader/x-vertex"> 
   
     #ifdef GL_ES
-      precision mediump float;
+      precision highp float;
       precision mediump int;
     #endif
 
@@ -52,7 +52,7 @@
   <script id="phong.frag" type="x-shader/x-fragment">
   
     #ifdef GL_ES
-      precision mediump float;
+      precision highp float;
       precision mediump int;
     #endif
 
@@ -104,12 +104,15 @@
     // materials
     uniform Material material;
 
-
+    float smootherstep(float edge0, float edge1, float x) {
+      x = clamp((x - edge0) / (edge1 - edge0), 0.0, 1.0);
+      return x * x * x * (x * (x * 6.0 - 15.0) + 10.0);
+    }
     
     float attenuation(float att, float dist){
       float attinv = 1.0 / att;
-      return 1.0 / (1.0 + attinv*dist + attinv*attinv*dist*dist);
-      //return smoothstep(att, 0.0, dist);
+      // return 1.0 / (1.0 + attinv*dist + attinv*attinv*dist*dist);
+      return smootherstep(att, 0.0, dist);
     }
     
     float getKd(vec3 vertNormal, vec3 lightDir){
@@ -173,7 +176,7 @@
           // diffuse specular
           float kd = getKd(vertNormal, lightDir         );
           float ks = getKs(vertNormal, lightDir, vertDir) * kdView;
-          
+
           fragcol += material.diff * light.col * kd * att;
           fragcol += material.spec * light.col * ks * att * (1.0 - step(kd, 0.0));
         }

@@ -26,10 +26,13 @@ new p5(function(sketch){
 
   var easycam;
 
-  sketch.setup = function() { 
+  sketch.setup = function() {  
+
+    sketch.pixelDensity(1);
   
     var canvas = sketch.createCanvas(sketch.windowWidth, sketch.windowHeight, sketch.WEBGL);
     sketch.setAttributes('antialias', true);
+    
     console.log(Dw.EasyCam.INFO);
 
     easycam = sketch.createEasyCam();
@@ -38,7 +41,7 @@ new p5(function(sketch){
 
 
   sketch.windowResized = function() {
-    resizeCanvas(sketch.windowWidth, sketch.windowHeight);
+    sketch.resizeCanvas(sketch.windowWidth, sketch.windowHeight);
     easycam.setViewport([0,0,sketch.windowWidth, sketch.windowHeight]);
   }
 

@@ -41,10 +41,14 @@ var phongshader;
 // }
 
 
-function setup () {
+function setup () { 
+
+  pixelDensity(1);
   
   createCanvas(windowWidth, windowHeight, WEBGL);
   setAttributes('antialias', true);
+  
+  console.log(Dw.EasyCam.INFO);
  
   easycam = createEasyCam();
  

@@ -39,8 +39,9 @@ var phongshader;
   // phongshader = loadShader('vert.glsl', 'frag.glsl');
 // }
 
-
 function setup () {
+  
+  pixelDensity(1);
   
   createCanvas(windowWidth, windowHeight, WEBGL);
   setAttributes('antialias', true);
@@ -52,7 +53,8 @@ function setup () {
     rotation : [-0.548, -0.834, 0.066, -0.015],
   };
   
- 
+  console.log(Dw.EasyCam.INFO);
+  
   easycam = new Dw.EasyCam(this._renderer, state);
   
   var phong_vert = document.getElementById("phong.vert").textContent;
@@ -138,13 +140,13 @@ function draw () {
   //////////////////////////////////////////////////////////////////////////////
   
   var ambientlight = {
-    col : [0.00, 0.0001, 0.0002],
+    col : [0.00, 0.0002, 0.0004],
   };
   
   var directlights = [
     {
       dir : [-1,-1,-2],
-      col : [0.0003, 0.0001, 0.00],
+      col : [0.0003, 0.0002, 0.0001],
     },
   ];
   

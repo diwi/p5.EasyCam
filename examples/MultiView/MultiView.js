@@ -109,7 +109,6 @@ function setCameraViewports(){
 }
 
 
-
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
   setCameraViewports();
@@ -165,7 +164,6 @@ function displayScene(cam){
   // scissors-test and viewport transformation
   setGLGraphicsViewport(x,y_inv,w,h);
   
-
   // modelview - using camera state
   cam.apply(this);
   
@@ -264,21 +262,6 @@ function displayScene(cam){
   // fill(255); // transparency issue
   // cam.endHUD(this._renderer);
 
-}
-
-
-
-
-function createScreenshot(){
-  this.scrid = this.scrid || 0; 
-  saveCanvas(this._renderer, 'MultiView_'+scrid, 'jpg');
-  this.scrid++;
-}
-
-
-
-function keyReleased(){
-  if(key === 'S') createScreenshot();
 }
 
 

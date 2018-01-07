@@ -26,10 +26,12 @@
 var easycam;
 
 function setup() {
+  
   pixelDensity(1);
   
   var canvas = createCanvas(windowWidth, windowHeight, WEBGL);
   setAttributes('antialias', true);
+  
   console.log(Dw.EasyCam.INFO);
 
   easycam = createEasyCam();

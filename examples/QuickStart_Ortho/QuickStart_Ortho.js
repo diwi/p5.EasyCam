@@ -27,6 +27,8 @@ var easycam;
 
 function setup() { 
 
+  pixelDensity(1);
+
   var canvas = createCanvas(windowWidth, windowHeight, WEBGL);
   setAttributes('antialias', true);
   
@@ -35,6 +37,8 @@ function setup() {
     distance : 200,
     // rotation : Dw.Rotation.create({angles_xyz:[0, 0, 0]}),
   };
+  
+  console.log(Dw.EasyCam.INFO);
   
   easycam = new Dw.EasyCam(this._renderer, state);
   

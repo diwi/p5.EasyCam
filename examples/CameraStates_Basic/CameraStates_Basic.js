@@ -44,9 +44,13 @@
 var easycam;
 
 function setup() { 
-
+ 
+  pixelDensity(1);
+  
   var canvas = createCanvas(windowWidth, windowHeight, WEBGL);
   setAttributes('antialias', true);
+  
+  console.log(Dw.EasyCam.INFO);
   
   easycam = new Dw.EasyCam(this._renderer, {distance : 400}); 
 } 
@@ -74,7 +78,7 @@ function draw(){
   strokeWeight(0.5);
   stroke(0);
   randomSeed(2);
-  for(var i = 0; i < 50; i++){
+  for(var i = 0; i < 70; i++){
     push();
     var m = 100;
     var tx = random(-m, m);
@@ -86,7 +90,7 @@ function draw(){
     var b = ((tz / m) * 0.5 + 0.5) * 255;
     
     translate(tx, ty, tz);
-    fill(r,g,b);
+    fill(r,g,255-r);
     box(random(10,40));
     pop();
   }

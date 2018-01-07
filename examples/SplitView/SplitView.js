@@ -51,6 +51,8 @@ function setup() {
   
   var graphics1 = createGraphics(w, h, WEBGL)
   var graphics2 = createGraphics(w, h, WEBGL);
+  
+  console.log(Dw.EasyCam.INFO);
 
   easycam1 = new Dw.EasyCam(graphics1._renderer, {distance : 600});
   easycam2 = new Dw.EasyCam(graphics2._renderer, {distance : 600});

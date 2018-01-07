@@ -41,17 +41,19 @@
  
  
  
- 
- 
 var easycam;
 
 var save_id = 1;
 
 
 function setup() { 
-
+ 
+  pixelDensity(1);
+  
   var canvas = createCanvas(windowWidth, windowHeight, WEBGL);
   setAttributes('antialias', true);
+  
+  console.log(Dw.EasyCam.INFO);
   
   easycam = new Dw.EasyCam(this._renderer, {distance : 300}); 
   
@@ -72,6 +74,7 @@ function setup() {
     div_set.mouseClicked(function(){
       save_id = this.idx;
     });
+    
     // callback: get state
     div_get.elt.camstate === undefined; 
     div_get.mouseClicked(function(){
@@ -214,15 +217,12 @@ function saveCameraState(){
 }
 
 
-
 function keyReleased(){
   if(key == '1') save_id = 1;
   if(key == '2') save_id = 2;
   if(key == '3') save_id = 3;
   if(key == '4') save_id = 4;
 }
-
-
 
 
 

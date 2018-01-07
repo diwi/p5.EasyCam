@@ -30,7 +30,7 @@ var Dw = {};
 const INFO = 
 {
   LIBRARY : "p5.EasyCam",
-  VERSION : "1.0.6",
+  VERSION : "1.0.7",
   AUTHOR  : "Thomas Diewald",
   SOURCE  : "https://github.com/diwi/p5.EasyCam",
   
@@ -151,7 +151,7 @@ var EasyCam = class {
     
     
     
-    // mouse action handler
+    // mouse/touch/key action handler
     this.mouse = {
       
       cam : cam,
@@ -203,7 +203,6 @@ var EasyCam = class {
       },
 
       updateInput : function(x,y,z){
-        
         var mouse = cam.mouse;
         var pd = cam.P5.pixelDensity();
         
@@ -221,13 +220,12 @@ var EasyCam = class {
       },
 
       
+      
       //////////////////////////////////////////////////////////////////////////
       // mouseinput
       //////////////////////////////////////////////////////////////////////////
 
       mousedown : function(event){
-        event.preventDefault();
-		    event.stopPropagation();
         var mouse = cam.mouse;
         
         if(event.button === 0) mouse.button |= mouse.BUTTON.LMB;
@@ -242,13 +240,17 @@ var EasyCam = class {
         } 
       },
       
-      mousedrag : function(event){
+      mousedrag : function(){
         var pd = cam.P5.pixelDensity();
         
         var mouse = cam.mouse;
         if(mouse.ismousedown){
           
-          mouse.updateInput(cam.P5.mouseX, cam.P5.mouseY, cam.P5.mouseY);
+          var x = cam.P5.mouseX;
+          var y = cam.P5.mouseY;
+          var z = y;
+          
+          mouse.updateInput(x, y, z);
           mouse.solveConstraint();
           
           var LMB = mouse.button & mouse.BUTTON.LMB;
@@ -262,8 +264,6 @@ var EasyCam = class {
       },
       
       mouseup : function(event){
-        event.preventDefault();
-		    event.stopPropagation();
         var mouse = cam.mouse;
         
         if(event.button === 0) mouse.button &= ~mouse.BUTTON.LMB;
@@ -294,14 +294,13 @@ var EasyCam = class {
       },
       
       
+      
       //////////////////////////////////////////////////////////////////////////
       // touchinput
       //////////////////////////////////////////////////////////////////////////
       
       evaluateTouches : function(event){
-        
         var touches = event.touches;
-        
         var avg_x = 0.0;
         var avg_y = 0.0;
         var avg_d = 0.0;
@@ -334,7 +333,6 @@ var EasyCam = class {
         var mouse = cam.mouse;
         
         mouse.evaluateTouches(event);
-  
         mouse.istouchdown = mouse.insideViewport(mouse.curr[0], mouse.curr[1]);
         mouse.isPressed = (cam.mouse.istouchdown || cam.mouse.ismousedown);
     
@@ -450,7 +448,7 @@ var EasyCam = class {
   setCanvas(renderer){
     if(renderer instanceof p5.RendererGL){
       // p5js seems to be not very clear about this
-      // ... pretty confusing, so i guess this could change in future releases
+      // ... a bit confusing, so i guess this could change in future releases
       this.renderer = renderer;
       if(renderer._pInst instanceof p5){
         this.graphics = renderer;
@@ -467,6 +465,8 @@ var EasyCam = class {
   getCanvas(){
     return this.renderer;
   }
+  
+  
   
   
   attachListener(el, ev, fx, op){
@@ -489,8 +489,6 @@ var EasyCam = class {
     }
   }
   
-  
-
   attachMouseListeners(renderer){
     var cam = this.cam;
     var mouse = cam.mouse;
@@ -505,11 +503,11 @@ var EasyCam = class {
       cam.attachListener(el    , 'mouseup'   , mouse.mouseup   , op);
       cam.attachListener(el    , 'dblclick'  , mouse.dblclick  , op);
       cam.attachListener(el    , 'wheel'     , mouse.wheel     , op);
-      cam.attachListener(window, 'keydown'   , mouse.keydown   , op);
-      cam.attachListener(window, 'keyup'     , mouse.keyup     , op);
       cam.attachListener(el    , 'touchstart', mouse.touchstart, op);
       cam.attachListener(el    , 'touchend'  , mouse.touchend  , op);
       cam.attachListener(el    , 'touchmove' , mouse.touchmove , op);
+      cam.attachListener(window, 'keydown'   , mouse.keydown   , op);
+      cam.attachListener(window, 'keyup'     , mouse.keyup     , op);
     }
   }
   
@@ -545,12 +543,12 @@ var EasyCam = class {
   
 
   
-  
   // [x,y,w,h]
   setViewport(viewport){
     this.viewport = viewport.slice();
   }
   
+  // [x,y,w,h]
   getViewport(){
     return this.viewport;
   }
@@ -585,7 +583,7 @@ var EasyCam = class {
     cam.apply();
   }
   
-
+  
   apply(renderer) { 
 
     var cam = this.cam;
@@ -605,7 +603,7 @@ var EasyCam = class {
   
 
 
-    
+
   //
   // mouse state changes
   //
@@ -653,6 +651,7 @@ var EasyCam = class {
   }
   
   
+  
   //
   // damped multipliers
   //
@@ -669,8 +668,6 @@ var EasyCam = class {
   }
   
   
-  
- 
   
   //
   // damped state changes
@@ -738,9 +735,6 @@ var EasyCam = class {
   
   
 
-
-  
-  
   // 
   // interpolated states
   //
@@ -772,9 +766,12 @@ var EasyCam = class {
   setDistance(distance, duration) {
     this.timedzoom.start(this.state.distance, distance, duration, [this.dampedZoom]);
   }
+  
   getDistance() {
     return this.state.distance;
   }
+  
+  
   
   //
   // CENTER / LOOK AT
@@ -782,9 +779,12 @@ var EasyCam = class {
   setCenter(center, duration) {
     this.timedPan.start(this.state.center, center, duration, [this.dampedPanX, this.dampedPanY]);
   }
+  
   getCenter() {
     return this.state.center;
   }
+  
+  
   
   //
   // ROTATION
@@ -792,12 +792,13 @@ var EasyCam = class {
   setRotation(rotation, duration) {
     this.timedRot.start(this.state.rotation, rotation, duration, [this.dampedRotX, this.dampedRotY, this.dampedRotZ]);
   }
+  
   getRotation() {
     return this.state.rotation;
   }
   
 
-  
+
   //
   // CAMERA POSITION/EYE
   //
@@ -829,10 +830,7 @@ var EasyCam = class {
   
   
   
-  
-  
-  
-    
+   
   //
   // STATE (rotation, center, distance)
   //
@@ -888,11 +886,11 @@ var EasyCam = class {
     return this.scale_rotation;
   }
   
-  getPanScale(){
+  getPanScale() {
     return this.scale_pan;
   }
   
-  getZoomScale(){
+  getZoomScale() {
     return this.scale_zoom;
   }
   
@@ -904,7 +902,7 @@ var EasyCam = class {
     this.scale_zoomwheel = wheelScale;
   }
   
-  setDamping(damping){
+  setDamping(damping) {
     this.dampedZoom.damping = damping;
     this.dampedPanX.damping = damping;
     this.dampedPanY.damping = damping;
@@ -913,11 +911,11 @@ var EasyCam = class {
     this.dampedRotZ.damping = damping;
   }
   
-  setDefaultInterpolationTime(duration){
+  setDefaultInterpolationTime(duration) {
     this.default_interpolation_time = duration;
   }
   
-  getDefaultInterpolationTime(){
+  getDefaultInterpolationTime() {
     return this.default_interpolation_time;
   }
   
@@ -929,8 +927,7 @@ var EasyCam = class {
     cam.FIXED_CONSTRAINT |= roll  ? cam.AXIS.ROLL  : 0;
   }
   
-  
-  
+
  
   /**
    * 
@@ -1049,6 +1046,12 @@ var DampedAction = class {
 
 
 
+
+
+
+
+
+
 var Interpolation = class {
     
   constructor(cam, cb_action){
@@ -1099,8 +1102,11 @@ var Interpolation = class {
 
 
 
-
-
+////////////////////////////////////////////////////////////////////////////////
+//
+// ROTATION (Quaternion)
+//
+////////////////////////////////////////////////////////////////////////////////
 var Rotation = 
 {
   
@@ -1253,6 +1259,11 @@ var Rotation =
 };
 
 
+////////////////////////////////////////////////////////////////////////////////
+//
+// SCALAR
+//
+////////////////////////////////////////////////////////////////////////////////
 
 var Scalar = {
   
@@ -1272,6 +1283,13 @@ var Scalar = {
 
 
 
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// VEC3
+//
+////////////////////////////////////////////////////////////////////////////////
 
 var Vec3 = 
 {
@@ -1382,6 +1400,13 @@ var Vec3 =
 
 
 
+////////////////////////////////////////////////////////////////////////////////
+//
+// UTILS
+//
+////////////////////////////////////////////////////////////////////////////////
+
+
 // utility function to get some GL/GLSL/WEBGL information
 var glInfo = function(){
   var gl = this.drawingContext;
@@ -1408,6 +1433,11 @@ var glInfo = function(){
 
 
 
+////////////////////////////////////////////////////////////////////////////////
+//
+// public objects
+//
+////////////////////////////////////////////////////////////////////////////////
 
 EasyCam.INFO = INFO; // make static
 Object.freeze(INFO); // and constant
@@ -1420,6 +1450,14 @@ ext.Vec3          = Vec3;
 ext.Scalar        = Scalar;
 
 
+
+
+
+
+
+
+
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 // p5 patches, bug fixes, workarounds, ...
@@ -1427,7 +1465,7 @@ ext.Scalar        = Scalar;
 ////////////////////////////////////////////////////////////////////////////////
 if(p5){
   
-  
+
   //
   // p5.glInfo();
   //

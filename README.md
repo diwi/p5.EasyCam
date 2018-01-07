@@ -56,7 +56,7 @@ something to play: [jsfiddle](https://jsfiddle.net/wqjugp9m/7/)
 
 ## Reference
 
-- [p5.EasyCam.docs](https://rawgit.com/diwi/p5.EasyCam/master/docs/index.html)
+- [p5.EasyCam.documentation](https://rawgit.com/diwi/p5.EasyCam/master/documentation/index.html)
 
 
 Java API for the corresponding Java version of the library:

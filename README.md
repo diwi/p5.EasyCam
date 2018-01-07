@@ -56,9 +56,10 @@ something to play: [jsfiddle](https://jsfiddle.net/wqjugp9m/7/)
 
 ## Reference
 
-... coming ...
+- [p5.EasyCam.docs](https://rawgit.com/diwi/p5.EasyCam/master/docs/index.html)
 
-for now, the Java API should do it:
+
+Java API for the corresponding Java version of the library:
 - http://thomasdiewald.com/processing/libraries/PeasyCam3/reference/index.html
 
 

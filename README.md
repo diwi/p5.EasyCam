@@ -13,8 +13,8 @@ Java Version of this project: https://github.com/diwi/peasycam/tree/PeasyCam3
 
 ## Releases
 
-- Latest: [p5.easycam.js](https://rawgit.com/diwi/p5.EasyCam/master/p5.easycam.js)
-- Latest: [p5.easycam.min.js](https://rawgit.com/diwi/p5.EasyCam/master/p5.easycam.min.js)
+- [p5.easycam.js](https://rawgit.com/diwi/p5.EasyCam/master/p5.easycam.js)
+- [p5.easycam.min.js](https://rawgit.com/diwi/p5.EasyCam/master/p5.easycam.min.js)
 - [All Releases](https://github.com/diwi/p5.EasyCam/releases)
 
 

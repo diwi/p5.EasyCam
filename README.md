@@ -57,7 +57,7 @@ something to play: [jsfiddle](https://jsfiddle.net/wqjugp9m/7/)
 ## Reference
 
 ##### Javascript API
-  - [p5.EasyCam.documentation](https://rawgit.com/diwi/p5.EasyCam/master/documentation/index.html)
+  - [p5.EasyCam.documentation](https://diwi.github.io/p5.EasyCam/documentation/)
 
 
 ##### Java API

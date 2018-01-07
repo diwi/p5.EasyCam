@@ -30,7 +30,7 @@ var Dw = {};
 const INFO = 
 {
   LIBRARY : "p5.EasyCam",
-  VERSION : "1.0.7",
+  VERSION : "1.0.8",
   AUTHOR  : "Thomas Diewald",
   SOURCE  : "https://github.com/diwi/p5.EasyCam",
   
@@ -1400,37 +1400,6 @@ var Vec3 =
 
 
 
-////////////////////////////////////////////////////////////////////////////////
-//
-// UTILS
-//
-////////////////////////////////////////////////////////////////////////////////
-
-
-// utility function to get some GL/GLSL/WEBGL information
-var glInfo = function(){
-  var gl = this.drawingContext;
-  
-  var info = {};
-  info.gl = this.drawingContext;
-  
-  var debugInfo  = gl.getExtension("WEBGL_debug_renderer_info");
-  if (debugInfo) {
-    info.gpu_renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
-    info.gpu_vendor   = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
-  }
-  info.wgl_renderer = gl.getParameter(gl.RENDERER);
-  info.wgl_version  = gl.getParameter(gl.VERSION);
-  info.wgl_glsl     = gl.getParameter(gl.SHADING_LANGUAGE_VERSION);
-  info.wgl_vendor   = gl.getParameter(gl.VENDOR);
-
-  return info;
-}
-
-
-
-
-
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1438,6 +1407,7 @@ var glInfo = function(){
 // public objects
 //
 ////////////////////////////////////////////////////////////////////////////////
+
 
 EasyCam.INFO = INFO; // make static
 Object.freeze(INFO); // and constant
@@ -1451,13 +1421,6 @@ ext.Scalar        = Scalar;
 
 
 
-
-
-
-
-
-
-
 ////////////////////////////////////////////////////////////////////////////////
 //
 // p5 patches, bug fixes, workarounds, ...
@@ -1466,19 +1429,6 @@ ext.Scalar        = Scalar;
 if(p5){
   
 
-  //
-  // p5.glInfo();
-  //
-  if(!p5.prototype.hasOwnProperty('glInfo'))
-  {
-    p5.prototype.glInfo = function(){
-      return this._renderer.glInfo.apply(this._renderer, arguments);
-    };
-    
-    p5.RendererGL.prototype.glInfo = glInfo;
-  }
-  
-  
   //
   // p5.createEasyCam();
   //
@@ -1499,6 +1449,8 @@ if(p5){
   }
   
   
+  
+
   //
   // p5.ortho();
   //

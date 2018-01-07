@@ -102,6 +102,28 @@ function draw(){
   displayHUD();
 }
 
+// utility function to get some GL/GLSL/WEBGL information
+function getGLInfo(){
+  
+  var gl = this._renderer.GL;
+  
+  var info = {};
+  info.gl = gl;
+  
+  var debugInfo  = gl.getExtension("WEBGL_debug_renderer_info");
+  if (debugInfo) {
+    info.gpu_renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+    info.gpu_vendor   = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
+  }
+  info.wgl_renderer = gl.getParameter(gl.RENDERER);
+  info.wgl_version  = gl.getParameter(gl.VERSION);
+  info.wgl_glsl     = gl.getParameter(gl.SHADING_LANGUAGE_VERSION);
+  info.wgl_vendor   = gl.getParameter(gl.VENDOR);
+
+  return info;
+}
+
+
 
 
 function initHUD(){
@@ -118,7 +140,7 @@ function initHUD(){
   createElement('li', "Center:"     ).parent(hleft);
   createElement('li', "Rotation:"   ).parent(hleft);
   
-  var info = this.glInfo();
+  var info = getGLInfo();
   createElement('li', info.gpu_renderer || '.').parent(hright).class('green'); 
   createElement('li', info.wgl_version  || '.').parent(hright).class('green'); 
   createElement('li', info.wgl_glsl     || '.').parent(hright).class('green'); 

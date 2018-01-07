@@ -1,4 +1,4 @@
-/**
+/*
  * 
  * The p5.EasyCam library - Easy 3D CameraControl for p5.js and WEBGL.
  *
@@ -17,22 +17,26 @@
  * 
  */
 
-
-// Dw namespace, .... new Dw.EasyCam(renderer, args);
-var Dw = {};
-
-
  
-(function(ext) {
+
+'use strict';
+
+
+
+
+/** @namespace */
+var Dw = (function(ext) {
   
-  
-// p5.EasyCam library info
+
+/**
+ * EasyCam Library Info
+ */
 const INFO = 
 {
-  LIBRARY : "p5.EasyCam",
-  VERSION : "1.0.8",
-  AUTHOR  : "Thomas Diewald",
-  SOURCE  : "https://github.com/diwi/p5.EasyCam",
+  /** name    */ LIBRARY : "p5.EasyCam",
+  /** version */ VERSION : "1.0.8",
+  /** author  */ AUTHOR  : "Thomas Diewald",
+  /** source  */ SOURCE  : "https://github.com/diwi/p5.EasyCam",
   
   toString : function(){
     return this.LIBRARY+" v"+this.VERSION+" by "+this.AUTHOR+" ("+this.SOURCE+")";
@@ -44,25 +48,28 @@ const INFO =
 
 
 /**
- * p5.EasyCam
+ * EasyCam
  *
- *   new p5.EasyCam(p5.RendererGL, {
+ * <pre>
+ *
+ *   new Dw.EasyCam(p5.RendererGL, {
  *     distance : z                 // scalar
  *     center   : [x, y, z]         // vector
  *     rotation : [q0, q1, q2, q3]  // quaternion
  *     viewport : [x, y, w, h]      // array
  *   }
  *
+ * </pre>
+ *
+ * @param {p5.RendererGL} renderer - p5 WEBGL renderer
+ * @param {Object}        args     - {distance, center, rotation, viewport}
+ // * @memberof Dw
+ *
  */
- 
-var EasyCam = class {
-  
+class EasyCam {
 
   /**
-   *
-   * renderer ... p5.RendererGL
-   * args     ... {distance, center, rotation, viewport}
-   *
+   * @constructor
    */
   constructor(renderer, args) {
     
@@ -116,8 +123,6 @@ var EasyCam = class {
     this.scale_pan       = 0.0002;
     this.scale_zoom      = 0.001;
     this.scale_zoomwheel = 20.0;
-    
-    this.default_interpolation_time = 300;
     
     // zoom limits
     this.distance_min_limit = 0.01;
@@ -429,22 +434,26 @@ var EasyCam = class {
     });
  
     // damped camera transition
-    this.dampedZoom = new DampedAction(this, function(d){ cam.zoom   (d * cam.getZoomMult    ()); }  );
-    this.dampedPanX = new DampedAction(this, function(d){ cam.panX   (d * cam.getPanMult     ()); }  );
-    this.dampedPanY = new DampedAction(this, function(d){ cam.panY   (d * cam.getPanMult     ()); }  );
-    this.dampedRotX = new DampedAction(this, function(d){ cam.rotateX(d * cam.getRotationMult()); }  );
-    this.dampedRotY = new DampedAction(this, function(d){ cam.rotateY(d * cam.getRotationMult()); }  );
-    this.dampedRotZ = new DampedAction(this, function(d){ cam.rotateZ(d * cam.getRotationMult()); }  );
+    this.dampedZoom = new DampedAction(function(d){ cam.zoom   (d * cam.getZoomMult    ()); }  );
+    this.dampedPanX = new DampedAction(function(d){ cam.panX   (d * cam.getPanMult     ()); }  );
+    this.dampedPanY = new DampedAction(function(d){ cam.panY   (d * cam.getPanMult     ()); }  );
+    this.dampedRotX = new DampedAction(function(d){ cam.rotateX(d * cam.getRotationMult()); }  );
+    this.dampedRotY = new DampedAction(function(d){ cam.rotateY(d * cam.getRotationMult()); }  );
+    this.dampedRotZ = new DampedAction(function(d){ cam.rotateZ(d * cam.getRotationMult()); }  );
     
     // interpolated camera transition
-    this.timedRot  = new Interpolation(this, this.setInterpolatedRotation);
-    this.timedPan  = new Interpolation(this, this.setInterpolatedCenter  );
-    this.timedzoom = new Interpolation(this, this.setInterpolatedDistance);
+    this.timedRot  = new Interpolation(cam.setInterpolatedRotation.bind(cam));
+    this.timedPan  = new Interpolation(cam.setInterpolatedCenter  .bind(cam));
+    this.timedzoom = new Interpolation(cam.setInterpolatedDistance.bind(cam));
   }
   
   
 
-  
+  /**
+   * sets the WEBGL renderer the camera is working on
+   *
+   * @param {RendererGL} renderer ... p5 WEBGL renderer
+   */
   setCanvas(renderer){
     if(renderer instanceof p5.RendererGL){
       // p5js seems to be not very clear about this
@@ -462,11 +471,10 @@ var EasyCam = class {
     }
   }
 
+  /** @return {RendererGL} the currently used renderer */
   getCanvas(){
     return this.renderer;
   }
-  
-  
   
   
   attachListener(el, ev, fx, op){
@@ -489,6 +497,7 @@ var EasyCam = class {
     }
   }
   
+  /** attaches input-listeners (mouse, touch, key) to the used renderer */
   attachMouseListeners(renderer){
     var cam = this.cam;
     var mouse = cam.mouse;
@@ -511,6 +520,7 @@ var EasyCam = class {
     }
   }
   
+  /** detaches all attached input-listeners */
   removeMouseListeners(){
     var cam = this.cam;
     var mouse = cam.mouse;
@@ -526,35 +536,36 @@ var EasyCam = class {
     cam.detachListener(mouse.touchmove );
   }
   
-  
+  /** Disposes/releases the camera. */
   dispose(){
     // TODO: p5 unregister 'pre', ... not available in 0.5.16
     removeMouseListeners();
   }
   
-  
+  /** @return {boolean} the current autoUpdate state */
   getAutoUpdate(){
     return this.auto_update;
   }
-  
+  /** 
+   * If true, the EasyCam will update automatically in a pre-draw step.
+   * This updates the camera state and updates the renderers 
+   * modelview/camera matrix.
+   *
+   * If false, the update() needs to be called manually.
+   *
+   * @param {boolean} the new autoUpdate state 
+   */
   setAutoUpdate(status){
     this.auto_update = status;
   }
   
 
-  
-  // [x,y,w,h]
-  setViewport(viewport){
-    this.viewport = viewport.slice();
-  }
-  
-  // [x,y,w,h]
-  getViewport(){
-    return this.viewport;
-  }
-
-  
-  // main easycam update call, registeredPre > update
+  /** 
+   * Updates the camera state (interpolated / damped animations) and updates
+   * the renderers' modelview/camera matrix.
+   *
+   * if "auto_update" is true, this is called automatically in a pre-draw call.
+   */
   update(){
     var cam = this.cam;
     var mouse = cam.mouse;
@@ -583,7 +594,10 @@ var EasyCam = class {
     cam.apply();
   }
   
-  
+  /** 
+   * Applies the current camera state to the renderers' modelview/camera matrix.
+   * If no argument is given, then the cameras currently set renderer is used.
+   */
   apply(renderer) { 
 
     var cam = this.cam;
@@ -602,23 +616,37 @@ var EasyCam = class {
   }
   
 
-
+  /** @param {int[]} the new viewport-def, as [x,y,w,h] */
+  setViewport(viewport){
+    this.viewport = viewport.slice();
+  }
+  
+  /** @returns {int[]} the current viewport-def, as [x,y,w,h] */
+  getViewport(){
+    return this.viewport;
+  }
+  
+  
 
   //
   // mouse state changes
   //
+  
+  /** implemented zoom-cb for mouswheel handler.*/
   mouseWheelZoom() {
     var cam = this;
     var mouse = cam.mouse;
     cam.dampedZoom.addForce(mouse.mwheel * cam.scale_zoomwheel);
   }
   
+  /** implemented zoom-cb for mousedrag/touch handler.*/
   mouseDragZoom() {
     var cam = this;
     var mouse = cam.mouse;
     cam.dampedZoom.addForce(-mouse.dist[2]);
   }
   
+  /** implemented pan-cb for mousedrag/touch handler.*/
   mouseDragPan() {
     var cam = this;
     var mouse = cam.mouse;
@@ -627,6 +655,7 @@ var EasyCam = class {
     cam.dampedPanY.addForce((cam.DRAG_CONSTRAINT & cam.AXIS.PITCH) ? mouse.dist[1] : 0);
   }
   
+  /** implemented rotate-cb for mousedrag/touch handler.*/
   mouseDragRotate() {
     var cam = this;
     var mouse = cam.mouse;
@@ -655,14 +684,15 @@ var EasyCam = class {
   //
   // damped multipliers
   //
+  /** (private) returns the used zoom -multiplier for damped actions. */
   getZoomMult(){
     return this.state.distance * this.scale_zoom;
   }
-  
+  /** (private) returns the used pan-multiplier for damped actions. */
   getPanMult(){
     return this.state.distance * this.scale_pan;
   }
-  
+  /** (private) returns the used rotate-multiplier for damped actions. */
   getRotationMult(){
     return Math.pow(Math.log10(1 + this.state.distance), 0.5) * this.scale_rotation;
   }
@@ -672,6 +702,7 @@ var EasyCam = class {
   //
   // damped state changes
   //
+  /** Applies a change to the current zoom.  */
   zoom(dz){
     var cam = this.cam;
     var distance_tmp = cam.state.distance + dz;
@@ -691,6 +722,7 @@ var EasyCam = class {
     cam.state.distance = distance_tmp;
   }
   
+  /** Applies a change to the current pan-xValue.  */
   panX(dx) {
     var state = this.cam.state;
     if(dx) {
@@ -699,6 +731,7 @@ var EasyCam = class {
     }
   }
   
+  /** Applies a change to the current pan-yValue.  */
   panY(dy) {
     var state = this.cam.state;
     if(dy) {
@@ -707,23 +740,28 @@ var EasyCam = class {
     }
   }
   
+  /** Applies a change to the current pan-value.  */
   pan(dx, dy) {
     this.cam.panX(dx);
     this.cam.panY(dx);
   }
-
+  
+  /** Applies a change to the current xRotation.  */
   rotateX(rx) {
    this.cam.rotate([1,0,0], rx);
   }
-
+  
+  /** Applies a change to the current yRotation.  */
   rotateY(ry) {
     this.cam.rotate([0,1,0], ry);
   }
-
+  
+  /** Applies a change to the current zRotation.  */
   rotateZ(rz) {
     this.cam.rotate([0,0,1], rz);
   }
   
+  /** Applies a change to the current rotation, using the given axis/angle.  */
   rotate(axis, angle) {
     var state = this.cam.state;
     if(angle) {
@@ -738,12 +776,15 @@ var EasyCam = class {
   // 
   // interpolated states
   //
+  /** Sets the new camera-distance, interpolated (t) between given A and B. */
   setInterpolatedDistance(valA, valB, t) {
     this.cam.state.distance = Scalar.mix(valA, valB, Scalar.smoothstep(t));
   }
+  /** Sets the new camera-center, interpolated (t) between given A and B. */
   setInterpolatedCenter(valA, valB, t) {
     this.cam.state.center = Vec3.mix(valA, valB, Scalar.smoothstep(t));
   }
+  /** Sets the new camera-rotation, interpolated (t) between given A and B. */
   setInterpolatedRotation(valA, valB, t) {
     this.cam.state.rotation = Rotation.slerp(valA, valB, t);
   }
@@ -753,20 +794,29 @@ var EasyCam = class {
   //
   // DISTANCE
   //
+  /** Sets the minimum camera distance. */
   setDistanceMin(distance_min) {
     this.distance_min = Math.max(distance_min, this.distance_min_limit);
     this.zoom(0); // update, to ensure new minimum
   }
-
+  
+  /** Sets the maximum camera distance. */
   setDistanceMax(distance_max) {
     this.distance_max = distance_max;
     this.zoom(0); // update, to ensure new maximum
   }
   
+  /** 
+   * Sets the new camera distance.
+   *
+   * @param {double} new distance.
+   * @param {long} animation time in millis.
+   */
   setDistance(distance, duration) {
     this.timedzoom.start(this.state.distance, distance, duration, [this.dampedZoom]);
   }
   
+  /** @returns {double} the current camera distance. */
   getDistance() {
     return this.state.distance;
   }
@@ -776,10 +826,17 @@ var EasyCam = class {
   //
   // CENTER / LOOK AT
   //
+  /** 
+   * Sets the new camera center.
+   *
+   * @param {double[]} new center.
+   * @param {long} animation time in millis.
+   */
   setCenter(center, duration) {
     this.timedPan.start(this.state.center, center, duration, [this.dampedPanX, this.dampedPanY]);
   }
   
+  /** @returns {double[]} the current camera center. */
   getCenter() {
     return this.state.center;
   }
@@ -789,10 +846,17 @@ var EasyCam = class {
   //
   // ROTATION
   //
+  /** 
+   * Sets the new camera rotation (quaternion).
+   *
+   * @param {double[]} new rotation as quat[q0,q1,q2,q3].
+   * @param {long} animation time in millis.
+   */
   setRotation(rotation, duration) {
     this.timedRot.start(this.state.rotation, rotation, duration, [this.dampedRotX, this.dampedRotY, this.dampedRotZ]);
   }
   
+  /** @returns {double[]} the current camera rotation as quat[q0,q1,q2,q3]. */
   getRotation() {
     return this.state.rotation;
   }
@@ -802,7 +866,8 @@ var EasyCam = class {
   //
   // CAMERA POSITION/EYE
   //
-   getPosition(dst) {
+  /** @returns {double[]} the current camera position, aka. the eye position. */
+  getPosition(dst) {
 
     var cam = this.cam;
     var state = cam.state;
@@ -818,6 +883,7 @@ var EasyCam = class {
   //
   // CAMERA UP
   //
+  /** @returns {double[]} the current camera up vector. */
   getUpVector(dst) {
     var cam = this.cam;
     var state = cam.state;
@@ -830,14 +896,18 @@ var EasyCam = class {
   
   
   
-   
+
   //
   // STATE (rotation, center, distance)
   //
+  /** @returns {Object} a copy of the camera state {distance,center,rotation} */
   getState() {
     return this.state.copy();
   }  
-  
+  /** 
+   * @param {Object} a new camera state {distance,center,rotation}.
+   * @param {long} animation time in millis.
+   */
   setState(other, duration) {
     if(other){
       this.setDistance(other.distance, duration);
@@ -849,15 +919,15 @@ var EasyCam = class {
   pushState(){
     return (this.state_pushed = this.getState());
   }
-  
   popState(duration){
     this.setState(this.state_pushed, duration);
   }
   
+  /** sets the current state as reset-state. */
   pushResetState(){
     return (this.state_reset = this.getState());
   }
-  
+  /** resets the camera, by applying the reset-state. */
   reset(duration){
     this.setState(this.state_reset, duration);
   }
@@ -869,39 +939,40 @@ var EasyCam = class {
 
   
   
-  
+  /** sets the rotation scale/speed. */
   setRotationScale(scale_rotation){
     this.scale_rotation = scale_rotation;
   }
-  
+  /** sets the pan scale/speed. */
   setPanScale(scale_pan){
     this.scale_pan = scale_pan;
   }
-  
+  /** sets the zoom scale/speed. */
   setZoomScale(scale_zoom){
     this.scale_zoom = scale_zoom;
   }
-  
-  getRotationScale(){
-    return this.scale_rotation;
-  }
-  
-  getPanScale() {
-    return this.scale_pan;
-  }
-  
-  getZoomScale() {
-    return this.scale_zoom;
-  }
-  
-  getWheelScale() {
-    return this.scale_zoomwheel;
-  }
-
+  /** sets the wheel scale/speed. */
   setWheelScale(wheelScale) {
     this.scale_zoomwheel = wheelScale;
   }
+  /** @returns the rotation scale/speed. */
+  getRotationScale(){
+    return this.scale_rotation;
+  }
+  /** @returns the pan scale/speed. */
+  getPanScale() {
+    return this.scale_pan;
+  }
+  /** @returns the zoom scale/speed. */
+  getZoomScale() {
+    return this.scale_zoom;
+  }
+  /** @returns the wheel scale/speed. */
+  getWheelScale() {
+    return this.scale_zoomwheel;
+  }
   
+  /** sets the default damping scale/speed. */
   setDamping(damping) {
     this.dampedZoom.damping = damping;
     this.dampedPanX.damping = damping;
@@ -910,15 +981,21 @@ var EasyCam = class {
     this.dampedRotY.damping = damping;
     this.dampedRotZ.damping = damping;
   }
-  
+  /** sets the default interpolation time in millis. */
   setDefaultInterpolationTime(duration) {
-    this.default_interpolation_time = duration;
+    this.timedRot .default_duration = duration;
+    this.timedPan .default_duration = duration;
+    this.timedzoom.default_duration = duration;
   }
   
-  getDefaultInterpolationTime() {
-    return this.default_interpolation_time;
-  }
   
+  /** 
+   * sets the rotation constraint for each axis separately.
+   *
+   * @param {boolean} yaw constraint
+   * @param {boolean} pitch constraint
+   * @param {boolean} roll constraint
+   */
   setRotationConstraint(yaw, pitch, roll) {
     var cam = this.cam;
     cam.FIXED_CONSTRAINT  = 0;
@@ -1010,23 +1087,39 @@ var EasyCam = class {
 
 
 
+/**
+ * Damped callback, that accepts the resulting damped/smooth value.
+ *
+ * @callback damped-callback
+ * @param {double} value - the damped/smoothed value
+ *
+ */
 
-
-
-
-var DampedAction = class {
-    
-  constructor(cam, cb_action){
-    this.cam = cam;
+ 
+/**
+ *
+ * DampedAction, for smoothly changing a value to zero.
+ *
+ * @param {damped-callback} cb - callback that accepts the damped value as argument.
+ */
+class DampedAction {
+  
+  
+  /**  @constructor */
+  constructor(cb){
     this.value = 0.0;
     this.damping = 0.85;
-    this.action = cb_action;
+    this.action = cb;
   }
 
+  /** adds a value to the current value beeing damped. 
+   * @param {double} force - the value beeing added.
+   */
   addForce(force) {
     this.value += force;
   }
 
+  /** updates the damping and calls {@link damped-callback}. */
   update() {
     var active = (this.value*this.value) > 0.000001;
     if (active){
@@ -1037,7 +1130,8 @@ var DampedAction = class {
     }
     return active;
   }
-
+  
+  /** stops the damping. */
   stop() {
     this.value = 0.0;
   }
@@ -1047,25 +1141,46 @@ var DampedAction = class {
 
 
 
+/**
+ * Interpolation callback, that implements any form of interpolation between
+ * two values A and B and the interpolationparameter t.
+ * <pre>
+ *   linear: A * (1-t) + B * t
+ *   smooth, etc...
+ * </pre>
+ * @callback interpolation-callback
+ * @param {Object} A - First Value
+ * @param {Object} B - Second Value
+ * @param {double} t - interpolation parameter [0, 1]
+ *
+ */
 
 
-
-
-
-var Interpolation = class {
-    
-  constructor(cam, cb_action){
-    this.cam = cam;
-    this.action = cb_action;
+/**
+ *
+ * Interpolation, for smoothly changing a value by interpolating it over time.
+ *
+ * @param {interpolation-callback} cb - callback for interpolating between two values.
+ */
+class Interpolation {
+  
+  /**  @constructor */
+  constructor(cb){
+    this.default_duration = 300;
+    this.action = cb;
   }
-
+  
+  /** starts the interpolation.
+   *  If the given interpolation-duration is 0, then
+   * {@link interpolation-callback} is called immediately.
+   */
   start(valA, valB, duration, actions) {
     for(var x in actions){
       actions[x].stop();
     }
     this.valA = valA;
     this.valB = valB;
-    this.duration = (duration === undefined) ? this.cam.default_interpolation_time : duration;
+    this.duration = (duration === undefined) ? this.default_duration : duration;
     this.timer = new Date().getTime();
     this.active = this.duration > 0;
     if(!this.active){
@@ -1073,6 +1188,7 @@ var Interpolation = class {
     }
   }
   
+  /** updates the interpolation and calls {@link interpolation-callback}.*/
   update() {
     if(this.active){
       var t = (new Date().getTime() - this.timer) / this.duration;
@@ -1089,6 +1205,7 @@ var Interpolation = class {
     this.action(this.valA, this.valB, t);
   }
   
+  /** stops the interpolation. */
   stop() {
     this.active = false;
   }
@@ -1107,6 +1224,13 @@ var Interpolation = class {
 // ROTATION (Quaternion)
 //
 ////////////////////////////////////////////////////////////////////////////////
+/**
+ * Rotation as Quaternion [q0, q1, q2, q3]
+ *
+ * Note: Only functions that were required for the EasyCam to work are implemented.
+ * 
+ * @namespace
+ */
 var Rotation = 
 {
   
@@ -1114,12 +1238,19 @@ var Rotation =
     return ((dst === undefined) || (dst.constructor !== Array)) ? [1, 0, 0, 0] : dst;
   },
   
-  // Return identity
+  /** @returns {Number[]} an identity rotation [1,0,0,0] */
   identity : function() {
     return [1, 0, 0, 0];
   },
   
-  // Apply the rotation to a vector.
+  /** 
+   * Applies the rotation to a vector and returns dst or a new vector.
+   *
+   * @param {Number[]} rot - Rotation (Quaternion)
+   * @param {Number[]} vec - vector to be rotated by rot
+   * @param {Number[]} dst - resulting vector
+   * @returns {Number[]} dst- resulting vector
+   */
   applyToVec3 : function(rot, vec, dst) {
     var x = vec[0];
     var y = vec[1];
@@ -1139,7 +1270,14 @@ var Rotation =
     return dst;
   },
   
-  
+  /** 
+   * Applies the rotation to another rotation and returns dst or a new rotation.
+   *
+   * @param {Number[]} rotA - RotationA (Quaternion)
+   * @param {Number[]} rotB - RotationB (Quaternion)
+   * @param {Number[]} dst - resulting rotation
+   * @returns {Number[]} dst - resulting rotation
+   */
   applyToRotation(rotA, rotB, dst) {
     var a0 = rotA[0], a1 = rotA[1], a2 = rotA[2], a3 = rotA[3];
     var b0 = rotB[0], b1 = rotB[1], b2 = rotB[2], b3 = rotB[3];
@@ -1153,7 +1291,15 @@ var Rotation =
   },
   
   
-  
+  /** 
+   * Interpolates a rotation.
+   *
+   * @param {Number[]} rotA - RotationA (Quaternion)
+   * @param {Number[]} rotB - RotationB (Quaternion)
+   * @param {Number  } t - interpolation parameter
+   * @param {Number[]} dst - resulting rotation
+   * @returns {Number[]} dst - resulting rotation
+   */
   slerp : function(rotA, rotB, t, dst) {
     var a0 = rotA[0], a1 = rotA[1], a2 = rotA[2], a3 = rotA[3];
     var b0 = rotB[0], b1 = rotB[1], b2 = rotB[2], b3 = rotB[3];
@@ -1188,7 +1334,35 @@ var Rotation =
     return Rotation.create({rotation : dst, normalize : true}, dst);
   },
   
-  
+  /** 
+   * Creates/Initiates a new Rotation
+   *
+   * <pre>
+   *
+   *    1) Axis,Angle:
+   *       {
+   *         axis : [x, y, z],
+   *         angle: double
+   *       }
+   *      
+   *    2) Another Rotation:
+   *       {
+   *         rotation : [q0, q1, q2, q3],
+   *         normalize: boolean
+   *       }
+   *      
+   *    3) 3 euler angles, XYZ-order:
+   *       {
+   *         angles_xyz : [rX, rY, rZ]
+   *       }
+   *   
+   * <pre>
+   *
+   *
+   * @param {Object} def - Definition, for creating the new Rotation
+   * @param {Number[]} dst - resulting rotation
+   * @returns {Number[]} dst - resulting rotation
+   */
   create : function(def, dst) {
     
     dst = Rotation.assert(dst);
@@ -1259,22 +1433,43 @@ var Rotation =
 };
 
 
+
+
+
+
+
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 // SCALAR
 //
 ////////////////////////////////////////////////////////////////////////////////
-
+/**
+ * Scalar as a simple number.
+ *
+ * Note: Only functions that were required for the EasyCam to work are implemented.
+ *
+ * @namespace
+ */
 var Scalar = {
   
+  /**
+   * Linear interpolation between A and B using t[0,1]
+   */
   mix : function(a, b, t){
     return a * (1-t) + b * t;
   },
-   
+     
+  /**
+   * modifying t as a function of smoothstep(0,1,t);
+   */
   smoothstep : function(x) {
     return x * x * (3 - 2 * x);
   },
   
+  /**
+   * modifying t as a function of smootherstep(0,1,t);
+   */
   smootherstep : function(t) {
     return x * x * x * (x * (x * 6 - 15) + 10);
   },
@@ -1290,7 +1485,11 @@ var Scalar = {
 // VEC3
 //
 ////////////////////////////////////////////////////////////////////////////////
-
+/**
+ * Vec3 as a 3D vector (Array)
+ *
+ * @namespace
+ */
 var Vec3 = 
 {
   
@@ -1304,7 +1503,7 @@ var Vec3 =
     // return typeof(arg) === 'number';
   },
   
-  
+  /** addition: <pre> dst = a + b </pre>  */
   add : function(a, b, dst) {
     dst = this.assert(dst);
     if(this.isScalar(b)){
@@ -1319,7 +1518,7 @@ var Vec3 =
     return dst;
   },
 
-  
+  /** componentwise multiplication: <pre> dst = a * b </pre>  */
   mult : function(a, b, dst){
     dst = this.assert(dst);
     if(this.isScalar(b)){
@@ -1334,22 +1533,22 @@ var Vec3 =
     return dst;
   },
 
-
+  /** squared length  */
   magSq : function(a) {
     return a[0]*a[0] + a[1]*a[1] + a[2]*a[2];
   },
   
-  
+  /** length  */
   mag : function(a) {
     return Math.sqrt(a[0]*a[0] + a[1]*a[1] + a[2]*a[2]);
   },
-
   
+  /** dot-product  */
   dot : function(a, b) {
     return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
   },
   
-  
+  /** cross-product  */
   cross : function(a, b, dst) {
     dst = this.assert(dst);
     dst[0] = a[1] * b[2] - a[2] * b[1];
@@ -1358,7 +1557,7 @@ var Vec3 =
     return dst;
   },
 
-  
+  /** angle  */
   angle : function(v1, v2){
 
     var normProduct = this.mag(v1) * this.mag(v2);
@@ -1382,7 +1581,7 @@ var Vec3 =
     return Math.acos(dot / normProduct);
   },
   
-  
+  /** linear interpolation: <pre> dst = a * (1 - t) + b * t </pre> */
   mix(a, b, t, dst) {
     dst = this.assert(dst);
     dst[0] = Scalar.mix(a[0], b[0], t); 
@@ -1402,22 +1601,8 @@ var Vec3 =
 
 
 
-////////////////////////////////////////////////////////////////////////////////
-//
-// public objects
-//
-////////////////////////////////////////////////////////////////////////////////
 
 
-EasyCam.INFO = INFO; // make static
-Object.freeze(INFO); // and constant
-
-ext.EasyCam       = EasyCam;
-ext.DampedAction  = DampedAction;
-ext.Interpolation = Interpolation;
-ext.Rotation      = Rotation;
-ext.Vec3          = Vec3;
-ext.Scalar        = Scalar;
 
 
 
@@ -1428,7 +1613,6 @@ ext.Scalar        = Scalar;
 ////////////////////////////////////////////////////////////////////////////////
 if(p5){
   
-
   //
   // p5.createEasyCam();
   //
@@ -1448,8 +1632,7 @@ if(p5){
     }
   }
   
-  
-  
+   
 
   //
   // p5.ortho();
@@ -1491,14 +1674,38 @@ if(p5){
     
   };
     
-  
-
-  
 }
+
+
+
+
+  
+////////////////////////////////////////////////////////////////////////////////
+//
+// public objects
+//
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @static
+ */
+EasyCam.INFO = INFO; // make static
+Object.freeze(INFO); // and constant
+
+
+ext = (ext !== undefined) ? ext : {};
+
+ext.EasyCam = EasyCam;
+ext.DampedAction = DampedAction;
+ext.Interpolation = Interpolation;
+ext.Rotation = Rotation;
+ext.Vec3 = Vec3;
+ext.Scalar = Scalar;
+
+return ext;
   
 
-
-})(Dw);
+})();
 
 
 

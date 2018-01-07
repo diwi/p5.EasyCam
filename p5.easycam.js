@@ -1356,7 +1356,7 @@ var Rotation =
    *         angles_xyz : [rX, rY, rZ]
    *       }
    *   
-   * <pre>
+   * </pre>
    *
    *
    * @param {Object} def - Definition, for creating the new Rotation

@@ -359,17 +359,9 @@ function handleSuperController(cameralist){
 
   // loadJS("https://rawgit.com/diwi/p5.EasyCam/master/p5.easycam.js");
  
-   // document.oncontextmenu = function() { return false; }
-   // document.onmousedown   = function() { return false; }
+  // document.oncontextmenu = function() { return false; }
+  // document.onmousedown   = function() { return false; }
  
 // })();
 
-
-
-
-
-
-
-
-  
 

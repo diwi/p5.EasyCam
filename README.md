@@ -56,11 +56,12 @@ something to play: [jsfiddle](https://jsfiddle.net/wqjugp9m/7/)
 
 ## Reference
 
-- [p5.EasyCam.documentation](https://rawgit.com/diwi/p5.EasyCam/master/documentation/index.html)
+##### Javascript API
+  - [p5.EasyCam.documentation](https://rawgit.com/diwi/p5.EasyCam/master/documentation/index.html)
 
 
-Java API for the corresponding Java version of the library:
-- http://thomasdiewald.com/processing/libraries/PeasyCam3/reference/index.html
+##### Java API
+  - http://thomasdiewald.com/processing/libraries/PeasyCam3/reference/index.html
 
 
 ## Screenshots

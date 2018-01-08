@@ -37,7 +37,6 @@ function setup() {
 
   easycam = createEasyCam();
   // easycam = new Dw.EasyCam(this._renderer, {distance : 600}); 
-  
 } 
 
 

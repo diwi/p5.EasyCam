@@ -171,10 +171,11 @@ endHUD(renderer)
 
 ## Screenshots
 
+![RandomBoxes](screenshots/RandomBoxes.jpg)
+
 ![MultiView](screenshots/MultiView.jpg)
 
 ![PerPixelPhong](screenshots/PerPixelPhong.jpg)
 
 ![CameraStates](screenshots/CameraStates.jpg)
 
-![MultiView](screenshots/RandomBoxes.jpg)

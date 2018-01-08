@@ -61,9 +61,9 @@ something to play: [jsfiddle](https://jsfiddle.net/wqjugp9m/7/)
   
 ```
   
-// AUTOUPDATE
-setAutoUpdate(status)
-getAutoUpdate()
++ AUTOUPDATE
+  - setAutoUpdate(status)
+  - getAutoUpdate()
 
 // INPUT HANDLER
 attachMouseListeners(renderer)

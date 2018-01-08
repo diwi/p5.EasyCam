@@ -250,77 +250,7 @@ function draw () {
     pop();
   }
   
-  
-  
-  
-  
-  /*
-  // ground
-  push();  
-  translate(0, 0, -5);
-  setMaterial(phongshader, matWhite);
-  box(1000, 1000, 10);
-  pop();
-  
 
-  push();
-  translate(0, 0, 100);
-  setMaterial(phongshader, matDark);
-  sphere(80);
-  pop();
-  
-  push();
-  translate(0, 0, 100);
-  rotateZ(sin(frameCount * 0.01) * PI);
-  rotateX(sin(frameCount * 0.04) * PI*0.1);
-  setMaterial(phongshader, matWhite);
-  torus(200, 25, 50, 25);
-
-  for(var i = 0; i < 5; i++){
-    push();
-    rotateZ(i * PI*2 / 5)
-    translate(200, 0, 0);
-    setMaterial(phongshader, materials[i]);
-    sphere(40);
-    pop();
-  }
-  pop();
-  
-  
-  push();
-  translate(0, 300, 130);
-  rotateX(PI/2);
-  setMaterial(phongshader, matWhite);
-  torus(100, 30, 40, 20);
-  pop();
-  
-  
-  randomSeed(0);
-  var NX = 3;
-  var NY = 3;
-  var radius = 50;
-  push();
-  var dimx = radius * 2 * (NX-1);
-  var dimy = radius * 2 * (NY-1);
-  translate(-dimx/2, -dimy * 1.5, radius);
-  rotateX(PI/2);
-  for(var y = 0; y < NY; y++){
-    for(var x = 0; x < NX; x++){
-      
-      var tx = x * radius * 2;
-      var ty = y * radius * 2;
-      push();
-      
-      var idx = 0;//(y * NY + x) % materials.length;
-      setMaterial(phongshader, materials[idx]);
-      
-      translate(tx, ty, 0);
-      sphere(radius * 0.8);
-      pop();
-    }
-  }
-  pop();
-  */
 }
 
 

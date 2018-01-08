@@ -62,14 +62,14 @@ something to play: [jsfiddle](https://jsfiddle.net/wqjugp9m/7/)
 ```javascript
 
 // CAMERA, MISC
-setCanvas(renderer) // used renderer
+setCanvas(renderer) // webgl-renderer
 getCanvas()
-setViewport(viewport) // viewport, as bounding screen-rectangle
+setViewport(viewport) // viewport as bounding screen-rectangle [x,y,w,h]
 getViewport()
-update() // update camera internal state
-apply(renderer) // apply camera state to renderer
-dispose() // dispose camera
-setAutoUpdate(status) // autoupdate
+update() // update camera state
+apply(renderer) // apply camera state to webgl-renderer
+dispose()
+setAutoUpdate(status)
 getAutoUpdate()
 attachMouseListeners(renderer) // input handler
 removeMouseListeners()
@@ -95,9 +95,9 @@ getUpVector(dst)
 getPosition(dst)
 
 // SET ZOOM/PAN/ROTATE
-setDistance(distance, duration)
-setDistanceMax(distance_max)
 setDistanceMin(distance_min)
+setDistanceMax(distance_max)
+setDistance(distance, duration)
 setCenter(center, duration)
 setRotation(rotation, duration)
 setInterpolatedCenter(valA, valB, t)
@@ -106,7 +106,6 @@ setInterpolatedRotation(valA, valB, t)
 
 // MODIFY ZOOM/PAN/ROTATE
 zoom(dz)
-pan(dx, dy)
 panX(dx)
 panY(dy)
 pan(dx, dy)

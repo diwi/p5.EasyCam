@@ -16,18 +16,16 @@
  * 
  */
 
-
-
+ 
  
 'use strict';
 
 
 
-/** @namespace */
+/** @namespace  */
 var Dw = (function(ext) {
   
 
-  
   
 /**
  * EasyCam Library Info
@@ -35,7 +33,7 @@ var Dw = (function(ext) {
 const INFO = 
 {
   /** name    */ LIBRARY : "p5.EasyCam",
-  /** version */ VERSION : "1.0.8",
+  /** version */ VERSION : "1.0.9",
   /** author  */ AUTHOR  : "Thomas Diewald",
   /** source  */ SOURCE  : "https://github.com/diwi/p5.EasyCam",
   
@@ -53,10 +51,10 @@ const INFO =
  * <pre>
  *
  *   new Dw.EasyCam(p5.RendererGL, {
- *     distance : z                 // scalar
- *     center   : [x, y, z]         // vector
- *     rotation : [q0, q1, q2, q3]  // quaternion
- *     viewport : [x, y, w, h]      // array
+ *     distance : z,                 // scalar
+ *     center   : [x, y, z],         // vector
+ *     rotation : [q0, q1, q2, q3],  // quaternion
+ *     viewport : [x, y, w, h],      // array
  *   }
  *
  * </pre>
@@ -1614,11 +1612,29 @@ Object.freeze(INFO); // and constant
 
 ext = (ext !== undefined) ? ext : {};
 
+/**
+ * @memberof Dw
+ */
 ext.EasyCam = EasyCam;
+/**
+ * @memberof Dw
+ */
 ext.DampedAction = DampedAction;
+/**
+ * @memberof Dw
+ */
 ext.Interpolation = Interpolation;
+/**
+ * @memberof Dw
+ */
 ext.Rotation = Rotation;
+/**
+ * @memberof Dw
+ */
 ext.Vec3 = Vec3;
+/**
+ * @memberof Dw
+ */
 ext.Scalar = Scalar;
 
 return ext;

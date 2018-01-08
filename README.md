@@ -62,17 +62,18 @@ something to play: [jsfiddle](https://jsfiddle.net/wqjugp9m/7/)
 ```javascript
 
 
-# SETUP
- 
-// EasyCam constructor
+## CAMERA SETUP
+
+// constructor
+new Dw.EasyCam(p5.RendererGL, state);
 new Dw.EasyCam(p5.RendererGL, {
-      distance : z                 // scalar
-      center   : [x, y, z]         // vector
-      rotation : [q0, q1, q2, q3]  // quaternion
-      viewport : [x, y, w, h]      // array
+      distance : z,                 // scalar (optional)
+      center   : [x, y, z],         // vector (optional)
+      rotation : [q0, q1, q2, q3],  // quaternion (optional)
+      viewport : [x, y, w, h],      // array (optional)
     }
 
-// setup examples
+// examples
 createEasyCam(); // uses the primary WEBGL renderer and default settings
  ...
 createEasyCam(p5.RendererGL);
@@ -84,9 +85,16 @@ new Dw.EasyCam(p5.RendererGL, {distance:z});
 new Dw.EasyCam(p5.RendererGL, {distance:z, center:[x,y,z]});
   ... 
 
+## CAMERA STATE
+
+state = {
+  distance : z,                 // scalar
+  center   : [x, y, z],         // vector
+  rotation : [q0, q1, q2, q3],  // quaternion
+}
 
 
-#  METHODS
+## CAMERA METHODS
 
 // CAMERA, MISC
 setCanvas(renderer) // webgl-renderer

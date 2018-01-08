@@ -57,6 +57,97 @@ something to play: [jsfiddle](https://jsfiddle.net/wqjugp9m/7/)
 ## Reference
 
   - [p5.EasyCam.documentation](https://diwi.github.io/p5.EasyCam/documentation/)
+  
+  
+```
+  
+// AUTOUPDATE
+setAutoUpdate(status)
+getAutoUpdate()
+
+// INPUT HANDLER
+attachMouseListeners(renderer)
+removeMouseListeners()
+
+// RENDERER
+setCanvas(renderer)
+getCanvas()
+
+// VIEWPORT (bounding screen-rectangle)
+setViewport(viewport)
+getViewport()
+
+// APPLY CURRENT STATE TO RENDERER
+apply(renderer)
+
+// UPDATE STATE
+update()
+
+// DELETE
+dispose()
+
+
+
+// INPUT BEHAVIOUR/SCALE/SPEED
+setZoomScale(scale_zoom)
+getZoomScale()
+setPanScale(scale_pan)
+getPanScale()
+setRotationScale(scale_rotation)
+getRotationScale()
+setWheelScale(wheelScale)
+getWheelScale()
+setDefaultInterpolationTime(duration)
+setDamping(damping)
+setRotationConstraint(yaw, pitch, roll)
+
+
+// GET ZOOM/PAN/ROTATE/POSITION/UP
+getCenter()
+getDistance()
+getRotation()
+getUpVector(dst)
+getPosition(dst)
+
+
+// SET ZOOM/PAN/ROTATE
+setDistance(distance, duration)
+setDistanceMax(distance_max)
+setDistanceMin(distance_min)
+setCenter(center, duration)
+setRotation(rotation, duration)
+setInterpolatedCenter(valA, valB, t)
+setInterpolatedDistance(valA, valB, t)
+setInterpolatedRotation(valA, valB, t)
+
+
+// MODIFY ZOOM/PAN/ROTATE
+zoom(dz)
+pan(dx, dy)
+panX(dx)
+panY(dy)
+pan(dx, dy)
+rotateX(rx)
+rotateY(ry)
+rotateZ(rz)
+rotate(axis, angle)
+
+
+// STATE MANAGEMENT
+setState(other, duration)
+getState()
+pushState()
+popState(duration)
+pushResetState()
+reset(duration)
+
+
+// HEAD_UP_DISPLAY
+beginHUD(renderer, w, h)
+endHUD(renderer)
+
+
+```
 
 
 ## Screenshots

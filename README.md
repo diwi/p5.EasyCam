@@ -60,25 +60,19 @@ something to play: [jsfiddle](https://jsfiddle.net/wqjugp9m/7/)
   
   
 ```javascript
-  
-// AUTOUPDATE
-setAutoUpdate(status)
-getAutoUpdate()
-// INPUT HANDLER
-attachMouseListeners(renderer)
-removeMouseListeners()
-// DELETE
-dispose()
-// RENDERER
-setCanvas(renderer)
+
+// CAMERA, MISC
+setCanvas(renderer) // used renderer
 getCanvas()
-// VIEWPORT (bounding screen-rectangle)
-setViewport(viewport)
+setViewport(viewport) // viewport, as bounding screen-rectangle
 getViewport()
-// UPDATE CAMERA
-update()
-// APPLY CURRENT STATE TO RENDERER
-apply(renderer)
+update() // update camera internal state
+apply(renderer) // apply camera state to renderer
+dispose() // dispose camera
+setAutoUpdate(status) // autoupdate
+getAutoUpdate()
+attachMouseListeners(renderer) // input handler
+removeMouseListeners()
 
 // INPUT BEHAVIOUR/SCALE/SPEED
 setZoomScale(scale_zoom)
@@ -121,7 +115,7 @@ rotateY(ry)
 rotateZ(rz)
 rotate(axis, angle)
 
-// STATE MANAGEMENT
+// CAMERA STATES
 setState(other, duration)
 getState()
 pushState()
@@ -132,6 +126,7 @@ reset(duration)
 // HEAD_UP_DISPLAY
 beginHUD(renderer, w, h)
 endHUD(renderer)
+
 ```
 
 

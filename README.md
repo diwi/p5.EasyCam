@@ -20,8 +20,9 @@ Processing/Java version of this project: https://github.com/diwi/peasycam/tree/P
 
 ## Examples
 
-- [PerPixelPhong](https://diwi.github.io/p5.EasyCam/examples/PerPixelPhong/)
 - [RandomBoxes](https://diwi.github.io/p5.EasyCam/examples/RandomBoxes/)
+- [PointLights](https://diwi.github.io/p5.EasyCam/examples/PointLights/)
+- [PerPixelPhong](https://diwi.github.io/p5.EasyCam/examples/PerPixelPhong/)
 - [CameraStates](https://diwi.github.io/p5.EasyCam/examples/CameraStates/)
 - [CameraStates_Basic](https://diwi.github.io/p5.EasyCam/examples/CameraStates_Basic/)
 - [HeadUpDisplay](https://diwi.github.io/p5.EasyCam/examples/HeadUpDisplay/)

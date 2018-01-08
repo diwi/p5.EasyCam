@@ -13,8 +13,8 @@ Java Version of this project: https://github.com/diwi/peasycam/tree/PeasyCam3
 
 ## Releases
 
-- [p5.easycam.js](https://rawgit.com/diwi/p5.EasyCam/master/p5.easycam.js)
-- [p5.easycam.min.js](https://rawgit.com/diwi/p5.EasyCam/master/p5.easycam.min.js)
+- [p5.easycam.js](https://diwi.github.io/p5.EasyCam/p5.easycam.js)
+- [p5.easycam.min.js](https://diwi.github.io/p5.EasyCam/p5.easycam.min.js)
 - [All Releases](https://github.com/diwi/p5.EasyCam/releases)
 
 
@@ -56,12 +56,77 @@ something to play: [jsfiddle](https://jsfiddle.net/wqjugp9m/7/)
 
 ## Reference
 
-##### Javascript API
   - [p5.EasyCam.documentation](https://diwi.github.io/p5.EasyCam/documentation/)
+  
+  
+```javascript
 
+// CAMERA, MISC
+setCanvas(renderer) // webgl-renderer
+getCanvas()
+setViewport(viewport) // viewport as bounding screen-rectangle [x,y,w,h]
+getViewport()
+update() // update camera state
+apply(renderer) // apply camera state to webgl-renderer
+dispose()
+setAutoUpdate(status)
+getAutoUpdate()
+attachMouseListeners(renderer) // input handler
+removeMouseListeners()
 
-##### Java API
-  - http://thomasdiewald.com/processing/libraries/PeasyCam3/reference/index.html
+// INPUT BEHAVIOUR/SCALE/SPEED
+setZoomScale(scale_zoom)
+getZoomScale()
+setPanScale(scale_pan)
+getPanScale()
+setRotationScale(scale_rotation)
+getRotationScale()
+setWheelScale(wheelScale)
+getWheelScale()
+setDefaultInterpolationTime(duration)
+setDamping(damping)
+setRotationConstraint(yaw, pitch, roll)
+
+// GET ZOOM/PAN/ROTATE/POSITION/UP
+getCenter()
+getDistance()
+getRotation()
+getUpVector(dst)
+getPosition(dst)
+
+// SET ZOOM/PAN/ROTATE
+setDistanceMin(distance_min)
+setDistanceMax(distance_max)
+setDistance(distance, duration)
+setCenter(center, duration)
+setRotation(rotation, duration)
+setInterpolatedCenter(valA, valB, t)
+setInterpolatedDistance(valA, valB, t)
+setInterpolatedRotation(valA, valB, t)
+
+// MODIFY ZOOM/PAN/ROTATE
+zoom(dz)
+panX(dx)
+panY(dy)
+pan(dx, dy)
+rotateX(rx)
+rotateY(ry)
+rotateZ(rz)
+rotate(axis, angle)
+
+// CAMERA STATES
+setState(other, duration)
+getState()
+pushState()
+popState(duration)
+pushResetState()
+reset(duration)
+
+// HEAD_UP_DISPLAY
+beginHUD(renderer, w, h)
+endHUD(renderer)
+
+```
 
 
 ## Screenshots

@@ -3,18 +3,18 @@
 
 # p5.EasyCam
 
-Simple 3D camera control for p5js and the WEBGL renderer.
+Simple 3D camera control for [p5js](https://p5js.org/) and the WEBGL/P3D renderer.
 
 This library is a derivative of the original PeasyCam Library by Jonathan Feinberg 
 and combines new useful features with the great look and feel of the original version.
 
-Java Version of this project: https://github.com/diwi/peasycam/tree/PeasyCam3
+Processing/Java version of this project: https://github.com/diwi/peasycam/tree/PeasyCam3
 
 
 ## Releases
 
-- [p5.easycam.js](https://diwi.github.io/p5.EasyCam/p5.easycam.js)
-- [p5.easycam.min.js](https://diwi.github.io/p5.EasyCam/p5.easycam.min.js)
+- [p5.easycam.js](https://rawgit.com/diwi/p5.EasyCam/master/p5.easycam.js)
+- [p5.easycam.min.js](https://rawgit.com/diwi/p5.EasyCam/master/p5.easycam.min.js)
 - [All Releases](https://github.com/diwi/p5.EasyCam/releases)
 
 
@@ -171,10 +171,11 @@ endHUD(renderer)
 
 ## Screenshots
 
+![RandomBoxes](screenshots/RandomBoxes.jpg)
+
 ![MultiView](screenshots/MultiView.jpg)
 
 ![PerPixelPhong](screenshots/PerPixelPhong.jpg)
 
 ![CameraStates](screenshots/CameraStates.jpg)
 
-![MultiView](screenshots/RandomBoxes.jpg)

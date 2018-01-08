@@ -14,13 +14,12 @@
  * p5.EasyCam is a derivative of the original PeasyCam Library by Jonathan Feinberg 
  * and combines new useful features with the great look and feel of its parent.
  * 
- * 
  */
 
+
  
-
+ 
 'use strict';
-
 
 
 
@@ -28,6 +27,8 @@
 var Dw = (function(ext) {
   
 
+  
+  
 /**
  * EasyCam Library Info
  */
@@ -43,7 +44,6 @@ const INFO =
   },
   
 };
-
 
 
 
@@ -63,7 +63,6 @@ const INFO =
  *
  * @param {p5.RendererGL} renderer - p5 WEBGL renderer
  * @param {Object}        args     - {distance, center, rotation, viewport}
- // * @memberof Dw
  *
  */
 class EasyCam {
@@ -452,7 +451,7 @@ class EasyCam {
   /**
    * sets the WEBGL renderer the camera is working on
    *
-   * @param {RendererGL} renderer ... p5 WEBGL renderer
+   * @param {p5.RendererGL} renderer ... p5 WEBGL renderer
    */
   setCanvas(renderer){
     if(renderer instanceof p5.RendererGL){
@@ -471,7 +470,7 @@ class EasyCam {
     }
   }
 
-  /** @return {RendererGL} the currently used renderer */
+  /** @return {p5.RendererGL} the currently used renderer */
   getCanvas(){
     return this.renderer;
   }
@@ -1090,7 +1089,7 @@ class EasyCam {
 /**
  * Damped callback, that accepts the resulting damped/smooth value.
  *
- * @callback damped-callback
+ * @callback dampedCallback
  * @param {double} value - the damped/smoothed value
  *
  */
@@ -1100,7 +1099,7 @@ class EasyCam {
  *
  * DampedAction, for smoothly changing a value to zero.
  *
- * @param {damped-callback} cb - callback that accepts the damped value as argument.
+ * @param {dampedCallback} cb - callback that accepts the damped value as argument.
  */
 class DampedAction {
   
@@ -1148,7 +1147,7 @@ class DampedAction {
  *   linear: A * (1-t) + B * t
  *   smooth, etc...
  * </pre>
- * @callback interpolation-callback
+ * @callback interpolationCallback
  * @param {Object} A - First Value
  * @param {Object} B - Second Value
  * @param {double} t - interpolation parameter [0, 1]
@@ -1160,7 +1159,7 @@ class DampedAction {
  *
  * Interpolation, for smoothly changing a value by interpolating it over time.
  *
- * @param {interpolation-callback} cb - callback for interpolating between two values.
+ * @param {interpolationCallback} cb - callback for interpolating between two values.
  */
 class Interpolation {
   
@@ -1252,14 +1251,9 @@ var Rotation =
    * @returns {Number[]} dst- resulting vector
    */
   applyToVec3 : function(rot, vec, dst) {
-    var x = vec[0];
-    var y = vec[1];
-    var z = vec[2];
     
-    var q0 = rot[0];
-    var q1 = rot[1];
-    var q2 = rot[2];
-    var q3 = rot[3];
+    var [x,y,z] = vec;
+    var [q0,q1,q2,q3] = rot;
     
     var s = q1 * x + q2 * y + q3 * z;
     
@@ -1279,8 +1273,8 @@ var Rotation =
    * @returns {Number[]} dst - resulting rotation
    */
   applyToRotation(rotA, rotB, dst) {
-    var a0 = rotA[0], a1 = rotA[1], a2 = rotA[2], a3 = rotA[3];
-    var b0 = rotB[0], b1 = rotB[1], b2 = rotB[2], b3 = rotB[3];
+    var [a0,a1,a2,a3] = rotA;
+    var [b0,b1,b2,b3] = rotB;
     
     dst = Rotation.assert(dst);
     dst[0] = b0 * a0 - (b1 * a1 +  b2 * a2 + b3 * a3);
@@ -1301,8 +1295,8 @@ var Rotation =
    * @returns {Number[]} dst - resulting rotation
    */
   slerp : function(rotA, rotB, t, dst) {
-    var a0 = rotA[0], a1 = rotA[1], a2 = rotA[2], a3 = rotA[3];
-    var b0 = rotB[0], b1 = rotB[1], b2 = rotB[2], b3 = rotB[3];
+    var [a0,a1,a2,a3] = rotA;
+    var [b0,b1,b2,b3] = rotB;
     
     var cosTheta = a0 * b0 + a1 * b1 + a2 * b2 + a3 * b3;
     if (cosTheta < 0) {
@@ -1604,6 +1598,43 @@ var Vec3 =
 
 
 
+  
+////////////////////////////////////////////////////////////////////////////////
+//
+// public objects
+//
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @static
+ */
+EasyCam.INFO = INFO; // make static
+Object.freeze(INFO); // and constant
+
+
+ext = (ext !== undefined) ? ext : {};
+
+ext.EasyCam = EasyCam;
+ext.DampedAction = DampedAction;
+ext.Interpolation = Interpolation;
+ext.Rotation = Rotation;
+ext.Vec3 = Vec3;
+ext.Scalar = Scalar;
+
+return ext;
+  
+
+})();
+
+
+
+
+
+
+
+
+
+
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1611,38 +1642,60 @@ var Vec3 =
 // p5 patches, bug fixes, workarounds, ...
 //
 ////////////////////////////////////////////////////////////////////////////////
+
+
+/**
+ * @submodule Camera
+ * @for p5
+ */
+
+
+
+
 if(p5){
   
-  //
-  // p5.createEasyCam();
-  //
-  if(!p5.prototype.hasOwnProperty('createEasyCam'))
-  {
-    p5.prototype.createEasyCam = function(/* p5.RendererGL, {state} */){
-      
-      var renderer = this._renderer;
-      var args     = arguments[0];
-      
-      if(arguments[0] instanceof p5.RendererGL){
-        renderer = arguments[0];
-        args     = arguments[1]; // could still be undefined, which is fine
-      } 
-      
-      return new ext.EasyCam(renderer, args); 
-    }
+    
+  /**
+   * p5.EasyCam creator function. 
+   * Arguments are optional, and equal to the default EasyCam constructor.
+   * @return {EasyCam} a new EasyCam
+   */
+  p5.prototype.createEasyCam = function(/* p5.RendererGL, {state} */){
+    
+    var renderer = this._renderer;
+    var args     = arguments[0];
+    
+    if(arguments[0] instanceof p5.RendererGL){
+      renderer = arguments[0];
+      args     = arguments[1]; // could still be undefined, which is fine
+    } 
+    
+    return new Dw.EasyCam(renderer, args); 
   }
   
-   
+  
 
-  //
-  // p5.ortho();
-  //
-  // https://github.com/processing/p5.js/pull/2463
+  /**
+   * Overriding the current p5.ortho();
+   *
+   * p5 v0.5.16
+   * temporary bugfix for https://github.com/processing/p5.js/pull/2463.
+   *
+   * @param  {Number} left   camera frustum left plane
+   * @param  {Number} right  camera frustum right plane
+   * @param  {Number} bottom camera frustum bottom plane
+   * @param  {Number} top    camera frustum top plane
+   * @param  {Number} near   camera frustum near plane
+   * @param  {Number} far    camera frustum far plane
+   * @return {p5}            the p5 object
+   */
   p5.prototype.ortho = function(){
     this._renderer.ortho.apply(this._renderer, arguments);
     return this;
   };
+  
 
+  
   p5.RendererGL.prototype.ortho = function(left, right, bottom, top, near, far) {
 
     if(left   === undefined) left   = -this.width  / 2;
@@ -1679,33 +1732,7 @@ if(p5){
 
 
 
-  
-////////////////////////////////////////////////////////////////////////////////
-//
-// public objects
-//
-////////////////////////////////////////////////////////////////////////////////
 
-/**
- * @static
- */
-EasyCam.INFO = INFO; // make static
-Object.freeze(INFO); // and constant
-
-
-ext = (ext !== undefined) ? ext : {};
-
-ext.EasyCam = EasyCam;
-ext.DampedAction = DampedAction;
-ext.Interpolation = Interpolation;
-ext.Rotation = Rotation;
-ext.Vec3 = Vec3;
-ext.Scalar = Scalar;
-
-return ext;
-  
-
-})();
 
 
 

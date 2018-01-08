@@ -450,9 +450,9 @@
               
                 
                 <li><a
-                  href='#damped-callback'
+                  href='#dampedcallback'
                   class="">
-                  damped-callback
+                  dampedCallback
                   
                 </a>
                 
@@ -500,9 +500,9 @@
               
                 
                 <li><a
-                  href='#interpolation-callback'
+                  href='#interpolationcallback'
                   class="">
-                  interpolation-callback
+                  interpolationCallback
                   
                 </a>
                 
@@ -703,6 +703,40 @@
                     
                     </ul>
                   
+                  
+                  
+                  
+                </div>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#p5'
+                  class=" toggle-sibling">
+                  p5
+                  <span class='icon'>▸</span>
+                </a>
+                
+                <div class='toggle-target display-none'>
+                  
+                  
+                    <ul class='list-reset py1-ul pl1'>
+                      <li class='h5'><span>Instance members</span></li>
+                      
+                      <li><a
+                        href='#p5createeasycam'
+                        class='regular pre-open'>
+                        #createEasyCam
+                      </a></li>
+                      
+                      <li><a
+                        href='#p5ortho'
+                        class='regular pre-open'>
+                        #ortho
+                      </a></li>
+                      
+                    </ul>
                   
                   
                   
@@ -1057,7 +1091,6 @@
           <div>
             <span class='code bold'>args</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
 	    {distance, center, rotation, viewport}
-// * @memberof Dw
 
           </div>
           
@@ -1146,7 +1179,7 @@
   <p>sets the WEBGL renderer the camera is working on</p>
 
 
-  <div class='pre p1 fill-light mt0'>setCanvas(renderer: RendererGL)</div>
+  <div class='pre p1 fill-light mt0'>setCanvas(renderer: p5.RendererGL)</div>
   
   
 
@@ -1163,7 +1196,7 @@
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>renderer</span> <code class='quiet'>(RendererGL)</code>
+            <span class='code bold'>renderer</span> <code class='quiet'>(p5.RendererGL)</code>
 	    ... p5 WEBGL renderer
 
           </div>
@@ -1205,7 +1238,7 @@
 
   
 
-  <div class='pre p1 fill-light mt0'>getCanvas(): RendererGL</div>
+  <div class='pre p1 fill-light mt0'>getCanvas(): p5.RendererGL</div>
   
   
 
@@ -1223,7 +1256,7 @@
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code>RendererGL</code>:
+      <code>p5.RendererGL</code>:
         the currently used renderer
 
       
@@ -4502,8 +4535,8 @@ endHUD()
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='damped-callback'>
-      damped-callback
+    <h3 class='fl m0' id='dampedcallback'>
+      dampedCallback
     </h3>
     
     
@@ -4513,7 +4546,7 @@ endHUD()
   <p>Damped callback, that accepts the resulting damped/smooth value.</p>
 
 
-  <div class='pre p1 fill-light mt0'>damped-callback(value: double)</div>
+  <div class='pre p1 fill-light mt0'>dampedCallback(value: double)</div>
   
     <p>
       Type:
@@ -4579,7 +4612,7 @@ endHUD()
   <p>DampedAction, for smoothly changing a value to zero.</p>
 
 
-  <div class='pre p1 fill-light mt0'>new DampedAction(cb: <a href="#damped-callback">damped-callback</a>)</div>
+  <div class='pre p1 fill-light mt0'>new DampedAction(cb: <a href="#dampedcallback">dampedCallback</a>)</div>
   
   
 
@@ -4596,7 +4629,7 @@ endHUD()
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>cb</span> <code class='quiet'>(<a href="#damped-callback">damped-callback</a>)</code>
+            <span class='code bold'>cb</span> <code class='quiet'>(<a href="#dampedcallback">dampedCallback</a>)</code>
 	    callback that accepts the damped value as argument.
 
           </div>
@@ -4692,7 +4725,7 @@ endHUD()
 
   
 
-  <p>updates the damping and calls <a href="#damped-callback">damped-callback</a>.</p>
+  <p>updates the damping and calls <a href="damped-callback">damped-callback</a>.</p>
 
 
   <div class='pre p1 fill-light mt0'>update()</div>
@@ -4787,8 +4820,8 @@ endHUD()
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='interpolation-callback'>
-      interpolation-callback
+    <h3 class='fl m0' id='interpolationcallback'>
+      interpolationCallback
     </h3>
     
     
@@ -4803,7 +4836,7 @@ two values A and B and the interpolationparameter t.</p>
 </pre>
 
 
-  <div class='pre p1 fill-light mt0'>interpolation-callback(A: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>, B: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>, t: double)</div>
+  <div class='pre p1 fill-light mt0'>interpolationCallback(A: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>, B: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>, t: double)</div>
   
     <p>
       Type:
@@ -4890,7 +4923,7 @@ two values A and B and the interpolationparameter t.</p>
   <p>Interpolation, for smoothly changing a value by interpolating it over time.</p>
 
 
-  <div class='pre p1 fill-light mt0'>new Interpolation(cb: <a href="#interpolation-callback">interpolation-callback</a>)</div>
+  <div class='pre p1 fill-light mt0'>new Interpolation(cb: <a href="#interpolationcallback">interpolationCallback</a>)</div>
   
   
 
@@ -4907,7 +4940,7 @@ two values A and B and the interpolationparameter t.</p>
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>cb</span> <code class='quiet'>(<a href="#interpolation-callback">interpolation-callback</a>)</code>
+            <span class='code bold'>cb</span> <code class='quiet'>(<a href="#interpolationcallback">interpolationCallback</a>)</code>
 	    callback for interpolating between two values.
 
           </div>
@@ -4945,7 +4978,7 @@ two values A and B and the interpolationparameter t.</p>
 
   <p>starts the interpolation.
 If the given interpolation-duration is 0, then
-<a href="#interpolation-callback">interpolation-callback</a> is called immediately.</p>
+<a href="interpolation-callback">interpolation-callback</a> is called immediately.</p>
 
 
   <div class='pre p1 fill-light mt0'>start(valA: any, valB: any, duration: any, actions: any)</div>
@@ -5028,7 +5061,7 @@ If the given interpolation-duration is 0, then
 
   
 
-  <p>updates the interpolation and calls <a href="#interpolation-callback">interpolation-callback</a>.</p>
+  <p>updates the interpolation and calls <a href="interpolation-callback">interpolation-callback</a>.</p>
 
 
   <div class='pre p1 fill-light mt0'>update()</div>
@@ -6443,6 +6476,228 @@ If the given interpolation-duration is 0, then
 </div>
 
   
+
+  
+
+  
+</section>
+
+          
+        
+          
+            <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='p5'>
+      p5
+    </h3>
+    
+    
+  </div>
+  
+
+  
+
+  <div class='pre p1 fill-light mt0'>p5</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Instance Members</div>
+    <div class="clearfix">
+  
+    <div class='border-bottom' id='p5createeasycam'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>createEasyCam()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>p5.EasyCam creator function.
+Arguments are optional, and equal to the default EasyCam constructor.</p>
+
+
+  <div class='pre p1 fill-light mt0'>createEasyCam(): <a href="#easycam">EasyCam</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#easycam">EasyCam</a></code>:
+        a new EasyCam
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='p5ortho'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>ortho(left, right, bottom, top, near, far)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Overriding the current p5.ortho();</p>
+<p>p5 v0.5.16
+temporary bugfix for <a href="https://github.com/processing/p5.js/pull/2463">https://github.com/processing/p5.js/pull/2463</a>.</p>
+
+
+  <div class='pre p1 fill-light mt0'>ortho(left: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>, right: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>, bottom: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>, top: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>, near: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>, far: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>): <a href="#p5">p5</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>left</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>)</code>
+	    camera frustum left plane
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>right</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>)</code>
+	    camera frustum right plane
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>bottom</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>)</code>
+	    camera frustum bottom plane
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>top</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>)</code>
+	    camera frustum top plane
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>near</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>)</code>
+	    camera frustum near plane
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>far</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>)</code>
+	    camera frustum far plane
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#p5">p5</a></code>:
+        the p5 object
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+</div>
 
   
 

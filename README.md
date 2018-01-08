@@ -61,6 +61,10 @@ something to play: [jsfiddle](https://jsfiddle.net/wqjugp9m/7/)
   
 ```javascript
 
+  /////////////////////////////
+ //    QUICK - REFERENCE    //
+/////////////////////////////
+
 
 ## CAMERA SETUP
 

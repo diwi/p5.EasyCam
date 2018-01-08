@@ -13,8 +13,8 @@ Java Version of this project: https://github.com/diwi/peasycam/tree/PeasyCam3
 
 ## Releases
 
-- [p5.easycam.js](https://rawgit.com/diwi/p5.EasyCam/master/p5.easycam.js)
-- [p5.easycam.min.js](https://rawgit.com/diwi/p5.EasyCam/master/p5.easycam.min.js)
+- [p5.easycam.js](https://diwi.github.io/p5.EasyCam/p5.easycam.js)
+- [p5.easycam.min.js](https://diwi.github.io/p5.EasyCam/p5.easycam.min.js)
 - [All Releases](https://github.com/diwi/p5.EasyCam/releases)
 
 
@@ -56,12 +56,7 @@ something to play: [jsfiddle](https://jsfiddle.net/wqjugp9m/7/)
 
 ## Reference
 
-##### Javascript API
   - [p5.EasyCam.documentation](https://diwi.github.io/p5.EasyCam/documentation/)
-
-
-##### Java API
-  - http://thomasdiewald.com/processing/libraries/PeasyCam3/reference/index.html
 
 
 ## Screenshots

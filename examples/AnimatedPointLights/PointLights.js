@@ -295,7 +295,7 @@ function addDirectlight(shader, directlights, idx){
   var light_dir = [x/mag, y/mag, z/mag];
   
   // transform to camera-space
-  light_dir = mult(m3_directions, light_dir);
+  light_dir = m3_directions.multVec(light_dir);
   
   // set shader uniforms
   shader.setUniform('directlights['+idx+'].dir', light_dir);
@@ -307,7 +307,7 @@ function addPointLight(shader, pointlights, idx){
   
   var light = pointlights[idx];
   
-  light.pos_cam = mult(easycam.renderer.uMVMatrix, light.pos);
+  light.pos_cam = easycam.renderer.uMVMatrix.multVec(light.pos);
   
   shader.setUniform('pointlights['+idx+'].pos', light.pos_cam);
   shader.setUniform('pointlights['+idx+'].col', light.col);
@@ -326,51 +326,42 @@ function addPointLight(shader, pointlights, idx){
 
 
 
-
-
 //
-// transforms a vector by a matrix (m4 or m3)
+// multiplies: vdst = mat * vsrc
 //
-function mult(mat, vSrc, vDst){
+// vsrc can be euqal vdst
+//
+p5.Matrix.prototype.multVec = function(vsrc, vdst){
   
-  vDst = ((vDst === undefined) || (vDst.constructor !== Array)) ? [] : vDst;
+  vdst = (vdst instanceof Array) ? vdst : [];
   
-  var x ,y ,z, w;
+  var x=0, y=0, z=0, w=1;
   
-  if(vSrc instanceof p5.Vector){
-    x = vSrc.x
-    y = vSrc.y;
-    z = vSrc.z;
-    w = 1;
-  } else if(vDst.constructor === Array){
-    x = vSrc[0];
-    y = vSrc[1];
-    z = vSrc[2];
-    w = vSrc[3]; w = (w === undefined) ? 1 : w;
-  } else {
-    console.log("vSrc must be a vector");
-  }
-  
-  if(mat instanceof p5.Matrix){
-    mat = mat.mat4 || mat.mat3;
-  }
-  
-  if(mat.length === 16){
-    vDst[0] = mat[0]*x + mat[4]*y + mat[ 8]*z + mat[12]*w,
-    vDst[1] = mat[1]*x + mat[5]*y + mat[ 9]*z + mat[13]*w,
-    vDst[2] = mat[2]*x + mat[6]*y + mat[10]*z + mat[14]*w;
-    vDst[3] = mat[3]*x + mat[7]*y + mat[11]*z + mat[15]*w; 
+  if(vsrc instanceof p5.Vector){
+    x = vsrc.x;
+    y = vsrc.y;
+    z = vsrc.z;
+  } else if(vsrc instanceof Array){
+    x = vsrc[0];
+    y = vsrc[1];
+    z = vsrc[2];
+    w = vsrc[3]; w = (w === undefined) ? 1 : w;
   } 
-  else if(mat.length === 9) {
-    vDst[0] = mat[0]*x + mat[3]*y + mat[6]*z,
-    vDst[1] = mat[1]*x + mat[4]*y + mat[7]*z,
-    vDst[2] = mat[2]*x + mat[5]*y + mat[8]*z;
+
+  var mat = this.mat4 || this.mat3;
+  if(mat.length === 16){
+    vdst[0] = mat[0]*x + mat[4]*y + mat[ 8]*z + mat[12]*w;
+    vdst[1] = mat[1]*x + mat[5]*y + mat[ 9]*z + mat[13]*w;
+    vdst[2] = mat[2]*x + mat[6]*y + mat[10]*z + mat[14]*w;
+    vdst[3] = mat[3]*x + mat[7]*y + mat[11]*z + mat[15]*w; 
+  } else {
+    vdst[0] = mat[0]*x + mat[3]*y + mat[6]*z;
+    vdst[1] = mat[1]*x + mat[4]*y + mat[7]*z;
+    vdst[2] = mat[2]*x + mat[5]*y + mat[8]*z;
   }
  
-  return vDst;
+  return vdst;
 }
-
-
 
 
 

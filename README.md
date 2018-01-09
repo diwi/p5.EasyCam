@@ -21,7 +21,7 @@ Processing/Java version of this project: https://github.com/diwi/peasycam/tree/P
 ## Examples
 
 - [RandomBoxes](https://diwi.github.io/p5.EasyCam/examples/RandomBoxes/)
-- [PointLights](https://diwi.github.io/p5.EasyCam/examples/PointLights/)
+- [AnimatedPointLights](https://diwi.github.io/p5.EasyCam/examples/AnimatedPointLights/)
 - [PerPixelPhong](https://diwi.github.io/p5.EasyCam/examples/PerPixelPhong/)
 - [CameraStates](https://diwi.github.io/p5.EasyCam/examples/CameraStates/)
 - [CameraStates_Basic](https://diwi.github.io/p5.EasyCam/examples/CameraStates_Basic/)
@@ -63,7 +63,7 @@ something to play: [jsfiddle](https://jsfiddle.net/wqjugp9m/7/)
 ```javascript
 
 ##
-## QUICK-REFERENCE
+## QUICKREF
 ##
 
 

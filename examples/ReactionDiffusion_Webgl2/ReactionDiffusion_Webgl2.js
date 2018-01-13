@@ -31,25 +31,38 @@
 'use strict';
 
 
-
+// framebuffer
 var fbo;
-var tex = {};
 
+// tex-struct (ping-pong)
+var tex = 
+{
+  src : null,
+  dst : null,
+  swap : function(){
+    var tmp = this.src;
+    this.src = this.dst;
+    this.dst = tmp;
+  }
+};
+
+// shader
 var shader_grayscott;
 var shader_display;
 
-var SCREEN_SCALE = 0.5; // offscreen resolution scale factor.
+// offscreen resolution scale factor.
+var SCREEN_SCALE = 0.5; 
 
-
+// reaction diffusion settings and presets
 var rdDef = {
-  name : 'ReactionDiffusion',
-  da : 1.0,
-  db : 0.6,
-  feed : 0.04,
-  kill : 0.06,
-  dt : 1.0,
-  iterations : 10,
-  reset : initRD,
+  name    : 'ReactionDiffusion',
+  da      : 1.0,
+  db      : 0.6,
+  feed    : 0.04,
+  kill    : 0.06,
+  dt      : 1.0,
+  iter    : 10,
+  reset   : initRD,
   preset0 : function() {  this.feed = 0.040; this.kill = 0.060; this.da = 1.00; this.db = 0.60; },
   preset1 : function() {  this.feed = 0.034; this.kill = 0.059; this.da = 1.00; this.db = 0.60; },
   preset2 : function() {  this.feed = 0.080; this.kill = 0.060; this.da = 1.00; this.db = 0.40; },
@@ -57,30 +70,28 @@ var rdDef = {
 };
 
 
-function GUI(){
-  var gui = new dat.GUI();
-  gui.add(rdDef, 'name');
-  gui.add(rdDef, 'da'        , 0, 1  ).listen();
-  gui.add(rdDef, 'db'        , 0, 1  ).listen();
-  gui.add(rdDef, 'feed'      , 0, 0.1).listen();
-  gui.add(rdDef, 'kill'      , 0, 0.1).listen();
-  gui.add(rdDef, 'dt'        , 0, 1);
-  gui.add(rdDef, 'iterations', 1, 50  );
-  gui.add(rdDef, 'preset0');
-  gui.add(rdDef, 'preset1');
-  gui.add(rdDef, 'preset2');
-  gui.add(rdDef, 'preset3');
-  gui.add(rdDef, 'reset');
-}
-
-
-
 
 function setup() { 
   pixelDensity(1);
   
-  var canvas = createCanvas(windowWidth, windowHeight, WEBGL);
-  GUI();
+  // webgl canvas
+  createCanvas(windowWidth, windowHeight, WEBGL);
+  
+  // create gui (dat.gui)
+  var gui = new dat.GUI();
+  gui.add(rdDef, 'name');
+  gui.add(rdDef, 'da'   , 0, 1  ).listen();
+  gui.add(rdDef, 'db'   , 0, 1  ).listen();
+  gui.add(rdDef, 'feed' , 0, 0.1).listen();
+  gui.add(rdDef, 'kill' , 0, 0.1).listen();
+  gui.add(rdDef, 'dt'   , 0, 1);
+  gui.add(rdDef, 'iter' , 1, 50);
+  gui.add(rdDef, 'preset0');
+  gui.add(rdDef, 'preset1');
+  gui.add(rdDef, 'preset2');
+  gui.add(rdDef, 'preset3');
+  gui.add(rdDef, 'reset'  );
+  
   
   // webgl context
   var gl = this._renderer.GL;
@@ -122,13 +133,9 @@ function setup() {
 
   tex.src = gl.newTexture(tex_w, tex_h, def);
   tex.dst = gl.newTexture(tex_w, tex_h, def);
-  tex.swap = function(){
-    var tmp = this.src;
-    this.src = this.dst;
-    this.dst = tmp;
-  }
+
+
   
- 
   // Shader source, depending on available webgl version
   var fs_grayscott = document.getElementById("webgl"+VERSION+".fs_grayscott").textContent;
   var fs_display   = document.getElementById("webgl"+VERSION+".fs_display"  ).textContent;
@@ -157,6 +164,8 @@ function setup() {
   initRD();
 }
 
+
+
 function windowResized() {
   var w = windowWidth;
   var h = windowHeight;
@@ -170,6 +179,7 @@ function windowResized() {
   
   initRD();
 }
+
 
 
 function draw(){
@@ -189,11 +199,6 @@ function draw(){
   shader_display.quad();
   shader_display.end();
 }
-
-
-
-
-
 
 
 
@@ -228,12 +233,12 @@ function initRD(){
 }
 
 
+
 function updateRD(){
   var gl = fbo.gl;
-  fbo.begin();
- 
+
   // multipass rendering (ping-pong)
-  for(var i = 0; i < rdDef.iterations; i++){
+  for(var i = 0; i < rdDef.iter; i++){
     
     // set texture as rendertarget
     fbo.begin(tex.dst);
@@ -272,10 +277,9 @@ function updateRD(){
     tex.swap();
   }
   
+  // end fbo, so p5 can take over again.
   fbo.end();
 }
-
-
 
 
 

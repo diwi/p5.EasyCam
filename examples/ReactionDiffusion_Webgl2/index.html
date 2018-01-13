@@ -158,7 +158,7 @@
   uniform vec2 wh_rcp;
   uniform sampler2D tex;
   
-  #define STEPS 6
+  #define STEPS 7
   uniform vec3 PALLETTE[STEPS];
 
   vec3 getShading(float val){
@@ -172,7 +172,8 @@
     if(id == 2) return mix(PALLETTE[2], PALLETTE[3], frac);
     if(id == 3) return mix(PALLETTE[3], PALLETTE[4], frac);
     if(id == 4) return mix(PALLETTE[4], PALLETTE[5], frac);
-    return PALLETTE[5];
+    if(id == 5) return mix(PALLETTE[5], PALLETTE[6], frac);
+    return PALLETTE[6];
   }
   
   void main () {

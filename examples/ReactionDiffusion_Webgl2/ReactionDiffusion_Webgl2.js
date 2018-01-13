@@ -206,9 +206,12 @@ function keyReleased(){
 
 function draw(){
 
-  ortho(0, width, -height, 0, 0, 20000);
-
+  // ortho(0, width, -height, 0, 0, 20000);
+  push();
+  ortho();
+  translate(-width/2, -height/2, 0);
   updateRD();
+  pop();
 
   var w = tex.dst.w / SCREEN_SCALE;
   var h = tex.dst.h / SCREEN_SCALE;
@@ -222,12 +225,15 @@ function draw(){
   shader_display.uniformF('wh_rcp', [1.0/w, 1.0/h]);
   shader_display.quad();
   shader_display.end();
+  
+
 }
 
 
 
 function initRD(){
   ortho();
+  // translate(-width/2, -height/2, 0);
     
   var gl = fbo.gl;
   

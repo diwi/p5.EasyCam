@@ -361,6 +361,7 @@ WebGLProgram.prototype.build = function(shaderlist){
 };
 
 
+
 ////////////////
 //////////////// WebGLShader 
 ////////////////
@@ -382,7 +383,6 @@ WebGLShader.prototype.build = function(){
       if(!map.hasOwnProperty(key)) continue;
       var def = map[key];
       source[def.i] = '#define '+def.name+' '+def.val;
-
     }
     
     // compile
@@ -451,11 +451,10 @@ WebGLShader.prototype.setDefine = function(name, val){
 
 
 
-// TODO: 
-//
-// - #define parsing
-// - dynamic build/rebuild
-//
+////////////////
+//////////////// Shader 
+////////////////
+
 class Shader {
   
   constructor(gl, def){

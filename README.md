@@ -34,7 +34,7 @@ Processing/Java version of this project: https://github.com/diwi/peasycam/tree/P
 - [SplitView](https://diwi.github.io/p5.EasyCam/examples/SplitView/)
 - [MultiView](https://diwi.github.io/p5.EasyCam/examples/MultiView/)
 
-#### EasyGL.js - WebGL2 wrapper
+#### dwgl.js - WebGL1/WebGL2 wrapper
 - [ReactionDiffusion](https://diwi.github.io/p5.EasyCam/examples/ReactionDiffusion_Webgl2/)
 
 

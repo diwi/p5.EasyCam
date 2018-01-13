@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
@@ -8,12 +8,12 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.16/p5.min.js"></script>
 
   <script src="../../p5.easycam.js"></script>
-  <script src="../../p5.easygl.js"></script>
+  <script src="../../dwgl.js"></script>
 
   <link rel="stylesheet" type="text/css" href="style.css">
   
   
-<script id="fs_grayscott" type="x-shader/x-fragment">
+<script id="webgl2.fs_grayscott" type="x-shader/x-fragment">
 #version 300 es
 
 #ifdef GL_ES
@@ -59,7 +59,7 @@ void main () {
 
 
 
-<script id="fs_display" type="x-shader/x-fragment">
+<script id="webgl2.fs_display" type="x-shader/x-fragment">
 #version 300 es
 
 #ifdef GL_ES
@@ -77,6 +77,82 @@ void main () {
   outfrag = vec4(vec3(1.0 - val.g), 1.0);
 }
 </script>
+
+
+
+
+<script id="webgl1.fs_grayscott" type="x-shader/x-fragment">
+#version 100
+
+#ifdef GL_ES
+  precision highp float;
+  precision mediump int;
+#endif
+
+precision highp float;
+precision mediump int;
+
+uniform vec2 wh_rcp;
+uniform sampler2D tex;
+
+uniform float dA  ;
+uniform float dB  ;
+uniform float feed;
+uniform float kill;
+uniform float dt  ;
+
+void main () {
+
+  vec2 posn = gl_FragCoord.xy * wh_rcp;
+  vec4 val = texture2D(tex, posn);  
+  vec4 laplace = -val;
+  
+  laplace += texture2D(tex, posn + vec2(-1, 0) * wh_rcp) * + 0.20;
+  laplace += texture2D(tex, posn + vec2(+1, 0) * wh_rcp) * + 0.20;
+  laplace += texture2D(tex, posn + vec2( 0,-1) * wh_rcp) * + 0.20;
+  laplace += texture2D(tex, posn + vec2( 0,+1) * wh_rcp) * + 0.20;
+  laplace += texture2D(tex, posn + vec2(-1,-1) * wh_rcp) * + 0.05;
+  laplace += texture2D(tex, posn + vec2(+1,-1) * wh_rcp) * + 0.05;
+  laplace += texture2D(tex, posn + vec2(-1,+1) * wh_rcp) * + 0.05;
+  laplace += texture2D(tex, posn + vec2(+1,+1) * wh_rcp) * + 0.05;
+  
+  float nA = val.r + (dA * laplace.r - val.r * val.g * val.g + (feed * (1.0 - val.r))) * dt;
+  float nB = val.g + (dB * laplace.g + val.r * val.g * val.g - ((kill + feed) * val.g)) * dt;
+  
+  gl_FragColor = vec4(clamp(vec2(nA, nB), vec2(0), vec2(1)), 0, 1);
+}
+</script>
+
+
+<script id="webgl1.fs_display" type="x-shader/x-fragment">
+#version 100
+
+#ifdef GL_ES
+  precision highp float;
+  precision mediump int;
+#endif
+
+uniform vec2 wh_rcp;
+uniform sampler2D tex;
+
+void main () {
+  vec2 val = texture2D(tex, gl_FragCoord.xy * wh_rcp).rg;
+  gl_FragColor = vec4(vec3(1.0 - val.g), 1.0);
+}
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

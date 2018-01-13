@@ -1,0 +1,94 @@
+
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>ReactionDiffusion_Webgl2</title>
+
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.16/p5.js"></script> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.16/p5.min.js"></script>
+
+  <script src="../../p5.easycam.js"></script>
+  <script src="../../p5.easygl.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="style.css">
+  
+  
+<script id="fs_grayscott" type="x-shader/x-fragment">
+#version 300 es
+
+#ifdef GL_ES
+  precision highp float;
+  precision mediump int;
+#endif
+
+precision highp float;
+precision mediump int;
+
+out vec2 outfrag;
+
+uniform vec2 wh_rcp;
+uniform sampler2D tex;
+
+uniform float dA  ;
+uniform float dB  ;
+uniform float feed;
+uniform float kill;
+uniform float dt  ;
+
+void main () {
+
+  vec2 posn = gl_FragCoord.xy * wh_rcp;
+  vec4 val = texture(tex, posn);  
+  vec4 laplace = -val;
+  
+  laplace += textureOffset(tex, posn, ivec2(-1, 0)) * + 0.20;
+  laplace += textureOffset(tex, posn, ivec2(+1, 0)) * + 0.20;
+  laplace += textureOffset(tex, posn, ivec2( 0,-1)) * + 0.20;
+  laplace += textureOffset(tex, posn, ivec2( 0,+1)) * + 0.20;
+  laplace += textureOffset(tex, posn, ivec2(-1,-1)) * + 0.05;
+  laplace += textureOffset(tex, posn, ivec2(+1,-1)) * + 0.05;
+  laplace += textureOffset(tex, posn, ivec2(-1,+1)) * + 0.05;
+  laplace += textureOffset(tex, posn, ivec2(+1,+1)) * + 0.05;
+  
+  float nA = val.r + (dA * laplace.r - val.r * val.g * val.g + (feed * (1.0 - val.r))) * dt;
+  float nB = val.g + (dB * laplace.g + val.r * val.g * val.g - ((kill + feed) * val.g)) * dt;
+  
+  outfrag = clamp(vec2(nA, nB), vec2(0), vec2(1));
+}
+</script>
+
+
+
+<script id="fs_display" type="x-shader/x-fragment">
+#version 300 es
+
+#ifdef GL_ES
+  precision highp float;
+  precision mediump int;
+#endif
+
+out vec4 outfrag;
+
+uniform vec2 wh_rcp;
+uniform sampler2D tex;
+
+void main () {
+  vec2 val = texture(tex, gl_FragCoord.xy * wh_rcp).rg;
+  outfrag = vec4(vec3(1.0 - val.g), 1.0);
+}
+</script>
+
+
+
+</head>
+<body oncontextmenu="return false;">
+
+  <div id="hud" class="unselectable"><ul></ul></div>
+
+  <script src="ReactionDiffusion_Webgl2.js"></script>
+  <script>
+  (function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();stats.domElement.style.cssText='position:fixed;left:0;top:0;z-index:10000';document.body.appendChild(stats.domElement);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='http://rawgit.com/mrdoob/stats.js/master/build/stats.min.js';document.head.appendChild(script);})()
+  </script>
+</body>
+
+</html>

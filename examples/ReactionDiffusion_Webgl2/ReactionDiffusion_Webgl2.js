@@ -67,6 +67,9 @@ var rdDef = {
   preset1 : function() {  this.feed = 0.034; this.kill = 0.059; this.da = 1.00; this.db = 0.60; },
   preset2 : function() {  this.feed = 0.080; this.kill = 0.060; this.da = 1.00; this.db = 0.40; },
   preset3 : function() {  this.feed = 0.015; this.kill = 0.050; this.da = 1.00; this.db = 0.60; },
+  preset4 : function() {  this.feed = 0.072; this.kill = 0.062; this.da = 0.50; this.db = 0.25; },
+  preset5 : function() {  this.feed = 0.071; this.kill = 0.063; this.da = 0.40; this.db = 0.20; },
+
 };
 
 
@@ -82,14 +85,16 @@ function setup() {
   gui.add(rdDef, 'name');
   gui.add(rdDef, 'da'   , 0, 1  ).listen();
   gui.add(rdDef, 'db'   , 0, 1  ).listen();
-  gui.add(rdDef, 'feed' , 0, 0.1).listen();
-  gui.add(rdDef, 'kill' , 0, 0.1).listen();
+  gui.add(rdDef, 'feed' , 0.01, 0.09).listen();
+  gui.add(rdDef, 'kill' , 0.01, 0.09).listen();
   gui.add(rdDef, 'dt'   , 0, 1);
   gui.add(rdDef, 'iter' , 1, 50);
   gui.add(rdDef, 'preset0');
   gui.add(rdDef, 'preset1');
   gui.add(rdDef, 'preset2');
   gui.add(rdDef, 'preset3');
+  gui.add(rdDef, 'preset4');
+  gui.add(rdDef, 'preset5');
   gui.add(rdDef, 'reset'  );
   
   
@@ -144,22 +149,7 @@ function setup() {
   shader_grayscott = new Shader(gl, {fs:fs_grayscott});
   shader_display   = new Shader(gl, {fs:fs_display  });
   
-  
-  // shading colors
-  var pallette = [
-    0.00, 0.00, 0.00,
-    0.00, 0.20, 0.40,
-    1.00, 0.80, 0.00,
-    0.00, 0.40, 1.00,     
-    0.40, 0.40, 0.20,
-    0.00, 0.00, 0.00
-  ];
-  
-  // set some uniforms that probably wont change
-  shader_display.begin();
-  shader_display.uniformF("PALLETTE", pallette, 6); 
-  shader_display.end();
-  
+ 
   // place initial samples
   initRD();
 }
@@ -182,6 +172,38 @@ function windowResized() {
 
 
 
+// shading colors
+var pallette = [
+  1.00, 1.00, 1.00,
+  0.00, 0.40, 0.80,
+  0.20, 0.00, 0.20,
+  1.00, 0.80, 0.40,
+  0.50, 0.25, 0.12,     
+  0.50, 0.50, 0.50,
+  0.00, 0.00, 0.00
+];
+
+
+
+function randomizeColors(){
+  var num = pallette.length /3;
+  for(var i = 1; i < num-1; i++){
+    var id = i * 3;
+    var r = random(1);
+    var g = random(1);
+    var b = random(1);
+    
+    pallette[id + 0] = r;
+    pallette[id + 1] = g;
+    pallette[id + 2] = b;
+  }
+}
+
+
+function keyReleased(){
+  // randomizeColors();
+}
+
 function draw(){
 
   ortho(0, width, -height, 0, 0, 20000);
@@ -191,9 +213,11 @@ function draw(){
   var w = tex.dst.w / SCREEN_SCALE;
   var h = tex.dst.h / SCREEN_SCALE;
   
+
   // display result
   shader_display.viewport(0, 0, w, h);
   shader_display.begin();
+  shader_display.uniformF('PALLETTE', pallette, 7); 
   shader_display.uniformT('tex', tex.src);
   shader_display.uniformF('wh_rcp', [1.0/w, 1.0/h]);
   shader_display.quad();
@@ -234,7 +258,15 @@ function initRD(){
 
 
 
+
+
+
+
+
+
+
 function updateRD(){
+
   var gl = fbo.gl;
 
   // multipass rendering (ping-pong)

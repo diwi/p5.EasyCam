@@ -20,9 +20,12 @@ Processing/Java version of this project: https://github.com/diwi/peasycam/tree/P
 
 ## Examples
 
+#### EasyCam.js - Advanced Shader/Lighting
 - [RandomBoxes](https://diwi.github.io/p5.EasyCam/examples/RandomBoxes/)
 - [AnimatedPointLights](https://diwi.github.io/p5.EasyCam/examples/AnimatedPointLights/)
 - [PerPixelPhong](https://diwi.github.io/p5.EasyCam/examples/PerPixelPhong/)
+
+#### EasyCam.js - Basic
 - [CameraStates](https://diwi.github.io/p5.EasyCam/examples/CameraStates/)
 - [CameraStates_Basic](https://diwi.github.io/p5.EasyCam/examples/CameraStates_Basic/)
 - [HeadUpDisplay](https://diwi.github.io/p5.EasyCam/examples/HeadUpDisplay/)
@@ -30,6 +33,9 @@ Processing/Java version of this project: https://github.com/diwi/peasycam/tree/P
 - [QuickStart_Ortho](https://diwi.github.io/p5.EasyCam/examples/QuickStart_Ortho/)
 - [SplitView](https://diwi.github.io/p5.EasyCam/examples/SplitView/)
 - [MultiView](https://diwi.github.io/p5.EasyCam/examples/MultiView/)
+
+#### EasyGL.js - WebGL2 wrapper
+- [ReactionDiffusion](https://diwi.github.io/p5.EasyCam/examples/ReactionDiffusion_Webgl2/)
 
 
 ## Usage

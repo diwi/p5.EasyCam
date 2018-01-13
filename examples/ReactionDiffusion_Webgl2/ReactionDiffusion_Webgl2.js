@@ -38,34 +38,74 @@ var tex = {};
 var shader_grayscott;
 var shader_display;
 
+var SCREEN_SCALE = 0.5; // offscreen resolution scale factor.
+
+
+var rdDef = {
+  name : 'ReactionDiffusion',
+  da : 1.0,
+  db : 0.6,
+  feed : 0.04,
+  kill : 0.06,
+  dt : 1.0,
+  iterations : 10,
+  reset : initRD,
+  preset0 : function() {  this.feed = 0.040; this.kill = 0.060; this.da = 1.00; this.db = 0.60; },
+  preset1 : function() {  this.feed = 0.034; this.kill = 0.059; this.da = 1.00; this.db = 0.60; },
+  preset2 : function() {  this.feed = 0.080; this.kill = 0.060; this.da = 1.00; this.db = 0.40; },
+  preset3 : function() {  this.feed = 0.015; this.kill = 0.050; this.da = 1.00; this.db = 0.60; },
+};
+
+
+function GUI(){
+  var gui = new dat.GUI();
+  gui.add(rdDef, 'name');
+  gui.add(rdDef, 'da'        , 0, 1  ).listen();
+  gui.add(rdDef, 'db'        , 0, 1  ).listen();
+  gui.add(rdDef, 'feed'      , 0, 0.1).listen();
+  gui.add(rdDef, 'kill'      , 0, 0.1).listen();
+  gui.add(rdDef, 'dt'        , 0, 1);
+  gui.add(rdDef, 'iterations', 1, 50  );
+  gui.add(rdDef, 'preset0');
+  gui.add(rdDef, 'preset1');
+  gui.add(rdDef, 'preset2');
+  gui.add(rdDef, 'preset3');
+  gui.add(rdDef, 'reset');
+}
+
+
+
 
 function setup() { 
   pixelDensity(1);
   
   var canvas = createCanvas(windowWidth, windowHeight, WEBGL);
+  GUI();
   
   // webgl context
   var gl = this._renderer.GL;
+  
+  // webgl version (1=webgl1, 2=webgl2)
+  var VERSION = gl.getVersion();
+  
+  console.log("WebGL Version: "+VERSION);
+  
 
   // get some webgl extensions
-  var extnames = [
-    'WEBGL_color_buffer_float',
-    'EXT_color_buffer_float',
-    'EXT_color_buffer_half_float',
-    'OES_texture_float',
-    'OES_texture_float_linear',
-    'OES_texture_half_float',
-    'OES_texture_half_float_linear',
-  ];
+  // if(VERSION === 1){
+    // var ext = gl.newExt(['OES_texture_float', 'OES_texture_float_linear'], true);
+  // }
+  // if(VERSION === 2){
+    // var ext = gl.newExt(['EXT_color_buffer_float'], true);
+  // }
   
-  var ext = gl.newExt(extnames);
-  // ext = gl.newExt(gl.getSupportedExtensions());
-  
+  // beeing lazy ... load all available extensions.
+  gl.newExt(gl.getSupportedExtensions(), true);
+
   
   // create FrameBuffer for offscreen rendering
   fbo = gl.newFramebuffer();
 
-  
   // create Textures for multipass rendering
   var def = {
      target   : gl.TEXTURE_2D
@@ -73,21 +113,22 @@ function setup() {
     ,format   : gl.RGBA
     ,type     : gl.FLOAT
     ,wrap     : gl.CLAMP_TO_EDGE
-    ,filter   : [gl.NEAREST, gl.NEAREST]
+    ,filter   : [gl.NEAREST, gl.LINEAR]
   }
 
-  tex.src = gl.newTexture(width, height, def);
-  tex.dst = gl.newTexture(width, height, def);
+  
+  var tex_w = ceil(width * SCREEN_SCALE);
+  var tex_h = ceil(height * SCREEN_SCALE);
+
+  tex.src = gl.newTexture(tex_w, tex_h, def);
+  tex.dst = gl.newTexture(tex_w, tex_h, def);
   tex.swap = function(){
     var tmp = this.src;
     this.src = this.dst;
     this.dst = tmp;
   }
   
-  
-  // webgl version (1=webgl1, 2=webgl2)
-  var VERSION = gl.getVersion();
-  
+ 
   // Shader source, depending on available webgl version
   var fs_grayscott = document.getElementById("webgl"+VERSION+".fs_grayscott").textContent;
   var fs_display   = document.getElementById("webgl"+VERSION+".fs_display"  ).textContent;
@@ -96,90 +137,144 @@ function setup() {
   shader_grayscott = new Shader(gl, {fs:fs_grayscott});
   shader_display   = new Shader(gl, {fs:fs_display  });
   
+  
+  // shading colors
+  var pallette = [
+    0.00, 0.00, 0.00,
+    0.00, 0.20, 0.40,
+    1.00, 0.80, 0.00,
+    0.00, 0.40, 1.00,     
+    0.40, 0.40, 0.20,
+    0.00, 0.00, 0.00
+  ];
+  
+  // set some uniforms that probably wont change
+  shader_display.begin();
+  shader_display.uniformF("PALLETTE", pallette, 6); 
+  shader_display.end();
+  
   // place initial samples
   initRD();
 }
 
+function windowResized() {
+  var w = windowWidth;
+  var h = windowHeight;
+  resizeCanvas(w, h);
+  
+  var tex_w = ceil(w * SCREEN_SCALE);
+  var tex_h = ceil(h * SCREEN_SCALE);
+  
+  tex.src.resize(tex_w, tex_h);
+  tex.dst.resize(tex_w, tex_h);
+  
+  initRD();
+}
+
+
+function draw(){
+
+  ortho(0, width, -height, 0, 0, 20000);
+
+  updateRD();
+
+  var w = tex.dst.w / SCREEN_SCALE;
+  var h = tex.dst.h / SCREEN_SCALE;
+  
+  // display result
+  shader_display.viewport(0, 0, w, h);
+  shader_display.begin();
+  shader_display.uniformT('tex', tex.src);
+  shader_display.uniformF('wh_rcp', [1.0/w, 1.0/h]);
+  shader_display.quad();
+  shader_display.end();
+}
+
+
+
+
+
+
+
 
 function initRD(){
+  ortho();
+    
   var gl = fbo.gl;
   
-    // Init
+  // bind framebuffer and texture for offscreenrendering
   fbo.begin(tex.dst);
-  gl.viewport(0, 0, width, height);
+  
+  var w = tex.dst.w;
+  var h = tex.dst.h;
+  
+  gl.viewport(0, 0, w, h);
   gl.clearColor(1.0, 0.0, 0.0, 0.0);
   gl.clear(gl.COLOR_BUFFER_BIT);
   gl.disable(gl.BLEND);
   gl.disable(gl.DEPTH_TEST);
   
   // < native p5 here
-  rectMode(CENTER);
   noStroke();
   fill(0,255,0);
   ellipse(-100, 0, 100, 100);
   ellipse(+100, 0, 100, 100);
+  ellipse(0, -100, 100, 100);
+  ellipse(0, +100, 100, 100);
   // >
-
-  fbo.end();
   tex.swap();
+  fbo.end();
+
 }
 
 
-
-function windowResized() {
-  var w = windowWidth;
-  var h = windowHeight;
-  resizeCanvas(w, h);
-  tex.src.resize(w, h);
-  tex.dst.resize(w, h);
-  initRD();
-}
-
-
-function draw(){
-  
-  ortho(0, width, -height, 0, 0, 20000);
-  noStroke();
-  fill(0,255,0);
-  
+function updateRD(){
+  var gl = fbo.gl;
+  fbo.begin();
+ 
   // multipass rendering (ping-pong)
-  for(var i = 0; i < 20; i++){
+  for(var i = 0; i < rdDef.iterations; i++){
+    
+    // set texture as rendertarget
     fbo.begin(tex.dst);
-    var gl = fbo.gl;
-    gl.viewport(0, 0, width, height);
+    
+    var w = tex.dst.w;
+    var h = tex.dst.h;
+ 
+    // clear texture
+    gl.viewport(0, 0, w, h);
     gl.clearColor(1.0, 0.0, 0.0, 0.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.disable(gl.BLEND);
     gl.disable(gl.DEPTH_TEST);
     
+    // apply shader
     shader_grayscott.begin();
-    shader_grayscott.uniformF("dA"    , [1.0  ]);
-    shader_grayscott.uniformF("dB"    , [0.5  ]);
-    shader_grayscott.uniformF("feed"  , [0.040]);
-    shader_grayscott.uniformF("kill"  , [0.061]);
-    shader_grayscott.uniformF("dt"    , [1.0    ]);
-    shader_grayscott.uniformF("wh_rcp", [1.0/width, 1.0/height]);
+    shader_grayscott.uniformF("dA"    , [rdDef.da]);
+    shader_grayscott.uniformF("dB"    , [rdDef.db]);
+    shader_grayscott.uniformF("feed"  , [rdDef.feed]);
+    shader_grayscott.uniformF("kill"  , [rdDef.kill]);
+    shader_grayscott.uniformF("dt"    , [rdDef.dt]);
+    shader_grayscott.uniformF("wh_rcp", [1.0/w, 1.0/h]);
     shader_grayscott.uniformT("tex"   , tex.src);
     shader_grayscott.quad();
     shader_grayscott.end();
     
     // < native p5 here
-    noStroke();
-    fill(0,255,0);
-    ellipse(mouseX, mouseY, 50, 50);
+    if(mouseIsPressed){
+      noStroke();
+      fill(0,255,0);
+      ellipse(mouseX, mouseY, 80, 80);
+    }
     // >
     
-    fbo.end();
+    // ping-pong
     tex.swap();
   }
   
-  // display result
-  shader_display.begin();
-  shader_display.uniformT('tex', tex.src);
-  shader_display.uniformF('wh_rcp', [1.0/width, 1.0/height]);
-  shader_display.quad();
-  shader_display.end();
+  fbo.end();
 }
+
 
 
 

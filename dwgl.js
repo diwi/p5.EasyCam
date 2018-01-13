@@ -116,46 +116,24 @@ WEBGL2_CTX.prototype.newProgram = function(){
 
 
 WEBGL1_CTX.prototype.newExt =
-WEBGL2_CTX.prototype.newExt = function(names, printlog=true){
-  
-  // https://www.khronos.org/registry/webgl/extensions/
-  // var names;
-  
-  // names = gl.getSupportedExtensions();
-
-  // for(var i = 0; i < names.length; i++){
-    // var ext = gl.getExtension(names[i]);
-    // console.log((ext ? "[x]" : "[ ]")+" - "+names[i]);
-  // }
-  
-  // names = [
-    // 'WEBGL_color_buffer_float',
-    // 'EXT_color_buffer_float', // gl.R16F,gl.RG16F,gl.RGBA16F,gl.R32F,gl.RG32F,gl.RGBA32F,gl.R11F_G11F_B10F
-    // 'EXT_color_buffer_half_float',
-    // 'OES_texture_float',
-    // 'OES_texture_float_linear',
-  // ];
-  
-  var rval = {};
-  
+WEBGL2_CTX.prototype.newExt = function(names, printlog=false){
+  var ext = {
+    log : "",
+    toString : function(){ return this.log; }
+  };
   
   for(var i = 0; i < names.length; i++){
     var name = names[i];
-    rval[name] = this.getExtension(name);
-    if(printlog){
-      console.log((rval[name] ? "[x]" : "[ ]")+" - "+name);
-    }
+    ext[name] = this.getExtension(name);
+    ext.log += (ext[name] ? "[x]" : "[ ]")+" - "+name+"\n";
   }
   
-  return rval;
-
+  if(printlog){
+    console.log(ext.log);
+  }
+  
+  return ext;
 };
-
-
-
-
-
-
 
 
 
@@ -258,11 +236,18 @@ WebGLFramebuffer.prototype.release = function(){
 
 WebGLFramebuffer.prototype.begin = function(tex){
   var gl = this.gl;
-  gl.fbo = this;
-  gl.bindFramebuffer(gl.FRAMEBUFFER, this);
-  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
-  if(tex && fbo.rbo){
-    fbo.rbo.resize(tex.w, tex.h);
+  
+  if(gl.fbo && gl.fbo !== this){
+    console.log("WARNING: another fbo is currently bound");
+  }
+  
+  if(!gl.fbo){
+    gl.bindFramebuffer(gl.FRAMEBUFFER, this);
+    gl.fbo = this;
+  }
+
+  if(tex instanceof WebGLTexture){
+    this.setTexture(tex);
   }
 };
 
@@ -275,15 +260,41 @@ WebGLFramebuffer.prototype.end = function(){
 WebGLFramebuffer.prototype.setRenderbuffer = function(rbo){
   var gl = this.gl;
   var fbo = this;
+  
   if(gl.fbo && gl.fbo !== this){
-    throw("another fbo is in use. unbind first");
+    console.log("WARNING: another fbo is currently bound");
   }
+
+  if(!gl.fbo) gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+  
   if(fbo.rbo != rbo){
-    gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
     gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, rbo);
-    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-    fbo.rbo = rbo;
+    fbo.rbo = rbo
+    if(tex && fbo.rbo){
+      fbo.rbo.resize(tex.w, tex.h);
+    }
   } 
+};
+
+WebGLFramebuffer.prototype.setTexture = function(tex){
+  var gl = this.gl;
+  var fbo = this;
+  
+  if(gl.fbo && gl.fbo !== this){
+    console.log("WARNING: another fbo is currently bound");
+  }
+  
+  if(!gl.fbo) gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+  
+  if(fbo.tex != tex){
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+    fbo.tex = tex;
+    if(tex && fbo.rbo){
+      fbo.rbo.resize(tex.w, tex.h);
+    }
+  } 
+  
+  if(!gl.fbo) gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 };
 
 
@@ -534,11 +545,7 @@ void main() {
   end(){
     var gl = this.gl;
     // clear active texture locations
-    for(var i = this.tex_loc - 1; i >= 0; --i){
-      gl.activeTexture(gl.TEXTURE0 + i);
-      gl.bindTexture(gl.TEXTURE_2D, null);
-    }
-    this.tex_loc = 0;
+    this.uniformTclear();
 
     // clear used shader
     gl.useProgram(null);
@@ -573,18 +580,6 @@ void main() {
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
     }
     return loc;
-  }
-  
-
-  uniformT(name, val){
-    var gl = this.gl;
-    var loc = this.uniformLoc(name);
-    if(loc){
-      gl.bindTexture(gl.TEXTURE_2D, val);
-      gl.activeTexture(gl.TEXTURE0 + this.tex_loc);
-      gl.uniform1i(loc, this.tex_loc);
-      this.tex_loc++;
-    } 
   }
   
   uniformF(name, values, arraylen = 1){
@@ -627,6 +622,29 @@ void main() {
       }
     }
   }
+  
+  uniformT(name, val){
+    var gl = this.gl;
+    var loc = this.uniformLoc(name);
+    if(loc){
+      gl.bindTexture(gl.TEXTURE_2D, val);
+      gl.activeTexture(gl.TEXTURE0 + this.tex_loc);
+      gl.uniform1i(loc, this.tex_loc);
+      this.tex_loc++;
+    } 
+  }
+  
+  uniformTclear(){
+    var gl = this.gl;
+    // clear active texture locations
+    for(var i = this.tex_loc - 1; i >= 0; --i){
+      gl.activeTexture(gl.TEXTURE0 + i);
+      gl.bindTexture(gl.TEXTURE_2D, null);
+    }
+    this.tex_loc = 0;
+  }
+  
+  
   
   scissors(x, y, w, h){
     var gl = this.gl;

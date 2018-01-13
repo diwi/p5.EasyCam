@@ -46,6 +46,14 @@ body{
 #hud{
   position: absolute;
   margin: 10px;
+  padding: 10px;
+  background-color: rgba(0,0,0,0.8);
+  color: #FFF;
+  display: block;
+  margin : auto;
+  left: 0;
+  right:0;
+  text-align: center;
 }
 
 
@@ -54,4 +62,8 @@ body{
   width : 100%;
   height: 100%;
   z-index: 1;
+}
+
+a {
+  color: #69b4ff;
 }

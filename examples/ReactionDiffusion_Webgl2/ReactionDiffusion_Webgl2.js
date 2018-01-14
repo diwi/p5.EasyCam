@@ -201,7 +201,9 @@ function randomizeColors(){
 
 
 function keyReleased(){
-  // randomizeColors();
+  if(key === 'C'){
+    randomizeColors();
+  }
 }
 
 function draw(){
